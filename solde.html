@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mon Espace Personnel</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter&display=swap"
+    rel="stylesheet"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+  <style>
+    /* ===== RESET ET VARIABLES ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --secondary-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      --accent-color: #00d4aa;
+      --text-dark: #34495e;
+      --text-secondary: #7f8c8d;
+      --text-white: #f3f4f6;
+      --glass-bg: rgba(255 255 255 / 0.85);
+      --glass-border: rgba(102 126 234 / 0.2);
+      --danger-color: #ef4444;
+      --shadow: rgba(0 0 0 / 0.12);
+      --pink: #ef4376;
+      --success-green: #22c55e;
+      --info-blue: #3b82f6;
+      --gray-light: #9ca3af;
+      --gray-dark: #374151;
+
+      --border-radius-lg: 20px;
+      --border-radius-md: 15px;
+      --border-radius-sm: 12px;
+
+      --spacing-xl: 30px;
+      --spacing-lg: 20px;
+      --spacing-md: 15px;
+      --spacing-sm: 10px;
+
+      --font-family: 'Inter', -apple-system, BlinkMacSystemFont,
+        'Segoe UI', sans-serif;
+
+      --font-size-base: 16px;
+      --font-size-lg: 20px;
+      --font-size-xl: 24px;
+
+      --shadow-md: 0 6px 20px rgba(0 0 0 / 0.1);
+      --shadow-lg: 0 12px 30px rgba(0 0 0 / 0.15);
+      --transition-base: 0.3s ease;
+    }
+
+    /* ===== LAYOUT PRINCIPAL ===== */
+    body {
+      font-family: var(--font-family);
+      background: #f9f9f9;
+      min-height: 100vh;
+      max-width: 480px;
+      margin: 0 auto;
+      position: relative;
+      padding-bottom: 100px;
+      color: var(--text-dark);
+      overflow-x: hidden;
+    }
+
+    /* ===== PARTICULES ANIMÉES ===== */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.15;
+    }
+
+    .particle {
+      position: absolute;
+      background: rgba(0, 0, 0, 0.07);
+      border-radius: 50%;
+      animation: float 6s ease-in-out infinite;
+      -webkit-animation: float 6s ease-in-out infinite;
+      filter: blur(0.5px);
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(180deg); }
+    }
+
+    /* ===== HEADER SECTION ===== */
+    .header-section {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+      padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-lg);
+      margin-bottom: var(--spacing-lg);
+      border: 1px solid var(--glass-border);
+      position: relative;
+      z-index: 10;
+      color: var(--text-dark);
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .avatar-container {
+      width: 70px;
+      height: 70px;
+      border-radius: 20px;
+      background: linear-gradient(45deg, #ef4444, #22c55e);
+      padding: 3px;
+      margin-right: var(--spacing-lg);
+      position: relative;
+    }
+
+    .avatar-container::after {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, #ef4444, #22c55e, #3b82f6, #96ceb4);
+      border-radius: 22px;
+      z-index: -1;
+      animation: rotate 3s linear infinite;
+      -webkit-animation: rotate 3s linear infinite;
+    }
+
+    .avatar-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 17px;
+      display: block;
+    }
+
+    .user-details {
+      flex: 1;
+    }
+
+    .username {
+      font-size: var(--font-size-lg);
+      font-weight: 800;
+      color: var(--text-dark);
+      margin-bottom: 6px;
+      font-family: var(--font-family);
+    }
+
+    .user-id {
+      font-size: 14px;
+      opacity: 0.75;
+      color: var(--gray-light);
+      font-weight: 600;
+      font-family: var(--font-family);
+    }
+
+    .settings-btn {
+      background: var(--glass-bg);
+      border: none;
+      width: 45px;
+      height: 45px;
+      border-radius: 15px;
+      color: var(--info-blue);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+    }
+    .settings-btn:hover {
+      background: rgba(59, 130, 246, 0.15);
+      transform: scale(1.05);
+    }
+
+    /* ===== VIP PROGRESS ===== */
+    .vip-container {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border-radius: var(--border-radius-md);
+      padding: var(--spacing-md);
+      border: 1px solid var(--glass-border);
+      text-align: center;
+      color: var(--text-dark);
+      font-family: var(--font-family);
+      font-weight: 600;
+      margin-top: 10px;
+    }
+
+    .vip-label {
+      font-size: 14px;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .progress-track {
+      background: rgba(0, 0, 0, 0.1);
+      height: 8px;
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+      width: 100%;
+      max-width: 360px;
+      margin: 0 auto;
+    }
+    .progress-fill {
+      background: linear-gradient(90deg, #00d4aa, #00b4d8);
+      height: 100%;
+      width: 0;
+      border-radius: 20px;
+      position: relative;
+      overflow: hidden;
+      transition: width 1.5s ease-in-out;
+    }
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.4),
+        transparent
+      );
+      animation: shimmer 2s infinite;
+    }
+    @keyframes shimmer {
+      0% {
+        left: -100%;
+      }
+      100% {
+        left: 100%;
+      }
+    }
+
+    /* ===== BALANCE GRID ===== */
+    .balance-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-lg);
+      margin: var(--spacing-lg) 0;
+      color: var(--text-dark);
+      font-family: var(--font-family);
+      z-index: 10;
+      position: relative;
+    }
+
+    .balance-card {
+      background: var(--glass-bg);
+      border-radius: var(--border-radius-lg);
+      padding: var(--spacing-lg);
+      border: 1px solid var(--glass-border);
+      text-align: center;
+      box-shadow: var(--shadow-md);
+      transition: box-shadow 0.3s ease;
+    }
+    .balance-card:hover {
+      box-shadow: var(--shadow-lg);
+    }
+
+    .balance-amount {
+      font-size: var(--font-size-lg);
+      font-weight: 700;
+      color: var(--success-green);
+      margin-bottom: 8px;
+    }
+
+    .balance-label {
+      font-size: 13px;
+      color: var(--gray-light);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* ===== MESSAGES D'ERREUR ===== */
+    .error-message {
+      background: rgba(239 68 68 / 0.15);
+      color: var(--danger-color);
+      padding: 10px;
+      border-radius: 8px;
+      margin: 10px var(--spacing-lg);
+      display: none;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: var(--font-family);
+      z-index: 10;
+      position: relative;
+    }
+
+    /* ===== CARTE D'ACTIONS ===== */
+    .action-card {
+      background: var(--glass-bg);
+      border-radius: var(--border-radius-lg);
+      margin: var(--spacing-lg);
+      border: 1px solid var(--glass-border);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Recharge rapide */
+    .quick-recharge {
+      background: var(--secondary-gradient);
+      padding: var(--spacing-lg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--text-white);
+      font-weight: 700;
+      font-family: var(--font-family);
+      text-decoration: none;
+      transition: transform 0.3s ease;
+      border-radius: var(--border-radius-md);
+    }
+    .quick-recharge:hover {
+      transform: scale(1.03);
+    }
+
+    .recharge-content {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+    }
+
+    .recharge-icon {
+      background: rgba(255 255 255 / 0.3);
+      width: 45px;
+      height: 45px;
+      border-radius: var(--border-radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-white);
+      flex-shrink: 0;
+    }
+
+    .recharge-text {
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    /* Éléments du menu */
+    .menu-item {
+      padding: var(--spacing-lg) var(--spacing-md);
+      border-bottom: 1px solid rgba(0 0 0 / 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      text-decoration: none;
+      color: var(--text-dark);
+      font-weight: 600;
+      font-family: var(--font-family);
+      transition: all 0.3s ease;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .menu-item:hover {
+      background: rgba(0 0 0 / 0.05);
+      padding-left: calc(var(--spacing-md) + 8px);
+    }
+
+    .menu-item:last-child {
+      border-bottom: none;
+    }
+
+    .menu-content {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+    }
+
+    .menu-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--glass-bg);
+      border-radius: var(--border-radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-color);
+      flex-shrink: 0;
+    }
+
+    .menu-text {
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .menu-arrow {
+      color: rgba(0 0 0 / 0.3);
+      transition: transform 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .menu-item:hover .menu-arrow {
+      transform: translateX(5px);
+    }
+
+    /* Élément déconnexion */
+    .logout-item {
+      color: var(--danger-color) !important;
+    }
+
+    .logout-item .menu-icon {
+      color: var(--danger-color);
+      background: rgba(239 68 68 / 0.15);
+    }
+
+    /* ===== NAVIGATION INFÉRIEURE ===== */
+    .nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      display: flex;
+      max-width: 480px;
+      margin: 0 auto;
+      border-top: 1px solid var(--glass-border);
+      box-shadow: 0 -4px 20px rgba(0 0 0 / 0.1);
+      padding: 12px 0 8px;
+      border-top-left-radius: var(--border-radius-lg);
+      border-top-right-radius: var(--border-radius-lg);
+      z-index: 1000;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--gray-light);
+      text-decoration: none;
+      font-size: 12px;
+      padding: 8px 0;
+      width: 20%;
+      transition: all 0.3s ease;
+      font-family: var(--font-family);
+      cursor: pointer;
+    }
+
+    .nav-item i {
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+
+    .nav-active {
+      color: var(--info-blue);
+      transform: translateY(-3px);
+      position: relative;
+      font-weight: 700;
+    }
+
+    .nav-active::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 30px;
+      height: 3px;
+      background: var(--info-blue);
+      border-radius: 0 0 10px 10px;
+    }
+
+    .nav-active i {
+      background-color: rgba(59 130 246 / 0.2);
+      padding: 8px;
+      border-radius: 50%;
+    }
+
+    /* ===== UTILITAIRES ===== */
+    .loading {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .fade-in {
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 380px) {
+      .balance-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+        margin: var(--spacing-md);
+      }
+
+      .header-section {
+        padding: 20px 15px 15px;
+        border-radius: var(--border-radius-lg);
+      }
+
+      .action-card {
+        margin: var(--spacing-md);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Arrière-plan animé -->
+  <div class="particles" id="particles-bg"></div>
+
+  <!-- Section d'en-tête -->
+  <header class="header-section">
+    <div class="user-profile">
+      <div class="avatar-container">
+        <img
+          src="https://image.noelshack.com/fichiers/2025/37/1/1757328012-cash-flow-1.jpg"
+          alt="Avatar utilisateur"
+        />
+      </div>
+      <div class="user-details">
+        <div class="username" id="user-id">Chargement...</div>
+        <div class="user-id" id="user-additional-id">ID: 0000000</div>
+      </div>
+      <button class="settings-btn" aria-label="Paramètres">
+        <i class="fas fa-cog"></i>
+      </button>
+    </div>
+
+    <div class="vip-container">
+      <div class="vip-label">Profitez de nos services premium sans limite</div>
+      <div class="progress-track">
+        <div class="progress-fill"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Grille de balance -->
+  <section class="balance-grid">
+    <div class="balance-card">
+      <div class="balance-amount" id="main-balance">0 FCFA</div>
+      <div class="balance-label">Portefeuille Principal</div>
+    </div>
+    <div class="balance-card">
+      <div class="balance-amount" id="total-revenue">0 FCFA</div>
+      <div class="balance-label">Revenu total</div>
+    </div>
+    <div class="balance-card">
+      <div class="balance-amount" id="total-withdrawals">0 FCFA</div>
+      <div class="balance-label">Total de retrait</div>
+    </div>
+    <div class="balance-card">
+      <div class="balance-amount" id="total-recharge">0 FCFA</div>
+      <div class="balance-label">Total de Dépôts</div>
+    </div>
+  </section>
+
+  <!-- Message d'erreur -->
+  <div id="error-message" class="error-message"></div>
+
+  <!-- Recharge rapide -->
+  <div class="action-card">
+    <a href="recharge.html" class="quick-recharge">
+      <div class="recharge-content">
+        <div class="recharge-icon">
+          <i class="fas fa-plus"></i>
+        </div>
+        <div class="recharge-text">Recharger Maintenant</div>
+      </div>
+      <i class="fas fa-arrow-right"></i>
+    </a>
+
+    <a href="retrait.html" class="menu-item">
+      <div class="menu-content">
+        <div class="menu-icon">
+          <i class="fas fa-money-bill-wave"></i>
+        </div>
+        <div class="menu-text">Effectuer un Retrait</div>
+      </div>
+      <i class="fas fa-chevron-right menu-arrow"></i>
+    </a>
+
+    <a href="portefeuille.html" class="menu-item">
+      <div class="menu-content">
+        <div class="menu-icon">
+          <i class="fas fa-wallet"></i>
+        </div>
+        <div class="menu-text">Gestion Portefeuille</div>
+      </div>
+      <i class="fas fa-chevron-right menu-arrow"></i>
+    </a>
+
+    <a href="historique-retrait.html" class="menu-item">
+      <div class="menu-content">
+        <div class="menu-icon">
+          <i class="fas fa-history"></i>
+        </div>
+        <div class="menu-text">Historique Retraits</div>
+      </div>
+      <i class="fas fa-chevron-right menu-arrow"></i>
+    </a>
+
+    <a href="historique.html" class="menu-item">
+      <div class="menu-content">
+        <div class="menu-icon">
+          <i class="fas fa-chart-line"></i>
+        </div>
+        <div class="menu-text">Historique Transactions</div>
+      </div>
+      <i class="fas fa-chevron-right menu-arrow"></i>
+    </a>
+
+    <a href="carte.html" class="menu-item">
+      <div class="menu-content">
+        <div class="menu-icon">
+          <i class="fas fa-credit-card"></i>
+        </div>
+        <div class="menu-text">Mes Cartes</div>
+      </div>
+      <i class="fas fa-chevron-right menu-arrow"></i>
+    </a>
+
+    <a href="services.html" class="menu-item">
+      <div class="menu-content">
+        <div class="menu-icon">
+          <i class="fas fa-headset"></i>
+        </div>
+        <div class="menu-text">Support Client</div>
+      </div>
+      <i class="fas fa-chevron-right menu-arrow"></i>
+    </a>
+
+    <a href="equipe.html" class="menu-item">
+      <div class="menu-content">
+        <div class="menu-icon">
+          <i class="fas fa-users"></i>
+        </div>
+        <div class="menu-text">Mon Équipe</div>
+      </div>
+      <i class="fas fa-chevron-right menu-arrow"></i>
+    </a>
+
+    <a href="index.html" class="menu-item logout-item">
+      <div class="menu-content">
+        <div class="menu-icon">
+          <i class="fas fa-sign-out-alt"></i>
+        </div>
+        <div class="menu-text">Se Déconnecter</div>
+      </div>
+      <i class="fas fa-chevron-right menu-arrow"></i>
+    </a>
+  </div>
+
+ <!-- Navigation bas -->
+  <nav class="nav" role="navigation" aria-label="Menu principal">
+    <a href="accueil.html" class="nav-item nav-active">
+      <i class="fas fa-home" aria-hidden="true"></i>
+      <span>Accueil</span>
+    </a>
+    <a href="investi.html" class="nav-item">
+      <i class="fas fa-gem" aria-hidden="true"></i>
+      <span>Marché</span>
+    </a>
+    <a href="machine.html" class="nav-item">
+      <i class="fas fa-chart-bar" aria-hidden="true"></i>
+      <span>Laboratoire</span>
+    </a>
+    <a href="equipe.html" class="nav-item">
+      <i class="fas fa-users" aria-hidden="true"></i>
+      <span>Équipe</span>
+    </a>
+    <a href="solde.html" class="nav-item">
+      <i class="fas fa-user-circle" aria-hidden="true"></i>
+      <span>Profil</span>
+    </a>
+  </nav>
+ 
+
+    <script>
+        // ===== GESTION DES PARTICULES ANIMÉES =====
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles-bg');
+            const particleCount = 15;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                const size = Math.random() * 6 + 2;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 4 + 4) + 's';
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // ===== GESTION DES ERREURS =====
+        function showErrorMessage(message) {
+            const errorElement = document.getElementById('error-message');
+            if (errorElement) {
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+                
+                setTimeout(() => {
+                    errorElement.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        // ===== INITIALISATION =====
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            
+            // Ajout d'un gestionnaire d'événements pour les boutons
+            document.querySelectorAll('.menu-item, .nav-button').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    // Ajouter un effet de clic
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                });
+            });
+        });
+
+        // ===== GESTION DE LA BARRE DE PROGRESSION VIP =====
+        setTimeout(() => {
+            const progressBar = document.querySelector('.progress-fill');
+            if (progressBar) {
+                progressBar.style.width = '60%';
+            }
+        }, 500);
+
+        // Fonction formatant le montant avec le symbole FCFA après, avec espace insécable
+        function formatCurrency(amount) {
+            return `${Number(amount).toLocaleString('fr-FR', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            })} FCFA`;
+        }
+
+    </script>
+
+    <!-- Script Firebase (Module ES6) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
+        import { 
+            getDatabase, 
+            ref, 
+            get, 
+            set, 
+            update,
+            onValue,
+            query,
+            orderByChild,
+            equalTo,
+            push
+        } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
+
+        // Configuration Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDRrkHLMeb6dwgT9OnLRDnTbsAkSxO3qoQ",
+            authDomain: "maison-c53c7.firebaseapp.com",
+            databaseURL: "https://maison-c53c7-default-rtdb.firebaseio.com",
+            projectId: "maison-c53c7",
+            storageBucket: "maison-c53c7.firestorage.app",
+            messagingSenderId: "720174612151",
+            appId: "1:720174612151:web:d7af687cce1cf33dde1732"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const database = getDatabase(app);
+
+        function showErrorMessage(message) {
+            const errorMessageElement = document.getElementById('error-message');
+            if (errorMessageElement) {
+                errorMessageElement.textContent = message;
+                errorMessageElement.style.display = 'block';
+                setTimeout(() => {
+                    errorMessageElement.textContent = '';
+                    errorMessageElement.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        async function recordWithdrawal(userId, amount) {
+            try {
+                const userRef = ref(database, `users/${userId}`);
+                const userSnapshot = await get(userRef);
+                const userData = userSnapshot.val();
+                
+                if (!userData || userData.balance < amount) {
+                    showErrorMessage("Solde insuffisant pour effectuer le retrait");
+                    return false;
+                }
+                
+                const newBalance = userData.balance - amount;
+                const updates = { balance: newBalance };
+                const withdrawalHistoryRef = ref(database, `users/${userId}/withdrawalHistory`);
+                const newWithdrawalRef = push(withdrawalHistoryRef);
+                const withdrawalData = {
+                    amount: amount,
+                    timestamp: Date.now(),
+                    status: 'success'
+                };
+                
+                await update(userRef, updates);
+                await set(newWithdrawalRef, withdrawalData);
+                updateUserBalance(newBalance);
+                calculateAndDisplayTotalWithdrawals(userId);
+                
+                return true;
+            } catch (error) {
+                console.error("Erreur lors du retrait:", error);
+                showErrorMessage("Une erreur est survenue lors du retrait");
+                return false;
+            }
+        }
+
+        function updateUserIdentifier(phoneNumber) {
+            const identifierElement = document.getElementById('user-id');
+            const additionalIdElement = document.getElementById('user-additional-id');
+            if (identifierElement && phoneNumber) {
+                const formattedNumber = phoneNumber.replace(/(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/, '$1 $2 $3 $4 $5');
+                const additionalId = `05*******${phoneNumber.slice(-2)} `;
+                identifierElement.textContent = formattedNumber;
+                additionalIdElement.textContent = additionalId;
+            }
+        }
+
+        function updateUserBalance(balance) {
+            const balanceElements = [
+                'main-balance', 
+                'total-revenue',
+                'total-withdrawals',
+                'total-recharge'
+            ];
+
+            balanceElements.forEach(elementId => {
+                const balanceElement = document.getElementById(elementId);
+                if (balanceElement) {
+                    balanceElement.textContent = formatCurrency(balance || 0);
+                }
+            });
+        }
+
+        function updateTotalWithdrawals(totalWithdrawals) {
+            const totalWithdrawalsElement = document.getElementById('total-withdrawals');
+            if (totalWithdrawalsElement) {
+                totalWithdrawalsElement.textContent = formatCurrency(totalWithdrawals || 0);
+            }
+        }
+
+        function calculateTotalRevenues(userId) {
+            const investmentsRef = ref(database, `investments/${userId}`);
+            
+            return new Promise((resolve, reject) => {
+                onValue(investmentsRef, (snapshot) => {
+                    const investments = snapshot.val();
+                    
+                    if (investments) {
+                        const totalRevenue = Object.values(investments)
+                            .filter(investment => investment.status === 'active')
+                            .reduce((total, investment) => total + (investment.totalCollected || 0), 0);
+
+                        const totalRevenueElement = document.getElementById('total-revenue');
+                        if (totalRevenueElement) totalRevenueElement.textContent = formatCurrency(totalRevenue);
+
+                        resolve(totalRevenue);
+                    } else {
+                        const totalRevenueElement = document.getElementById('total-revenue');
+                        if (totalRevenueElement) totalRevenueElement.textContent = formatCurrency(0);
+
+                        resolve(0);
+                    }
+                }, (error) => {
+                    console.error("Erreur lors de la récupération des revenus:", error);
+                    const totalRevenueElement = document.getElementById('total-revenue');
+                    if (totalRevenueElement) totalRevenueElement.textContent = formatCurrency(0);
+                    reject(error);
+                });
+            });
+        }
+
+        function calculateTotalRecharges(userId) {
+            const rechargesRef = ref(database, 'transactions');
+            const userRechargesQuery = query(rechargesRef, orderByChild('userId'), equalTo(userId));
+            
+            return new Promise((resolve, reject) => {
+                onValue(userRechargesQuery, (snapshot) => {
+                    const transactions = snapshot.val();
+                    
+                    if (transactions) {
+                        const totalRecharges = Object.values(transactions)
+                            .filter(transaction => transaction.status === 'success')
+                            .reduce((total, transaction) => total + (parseFloat(transaction.amount) || 0), 0);
+
+                        const rechargeCount = Object.values(transactions)
+                            .filter(transaction => transaction.status === 'success').length;
+
+                        const totalRechargesElement = document.getElementById('total-recharge');
+                        if (totalRechargesElement) totalRechargesElement.textContent = formatCurrency(totalRecharges);
+
+                        const rechargeCountElement = document.getElementById('recharge-count');
+                        if (rechargeCountElement) rechargeCountElement.textContent = rechargeCount;
+
+                        resolve({ totalRecharges, rechargeCount });
+                    } else {
+                        const totalRechargesElement = document.getElementById('total-recharge');
+                        if (totalRechargesElement) totalRechargesElement.textContent = formatCurrency(0);
+
+                        const rechargeCountElement = document.getElementById('recharge-count');
+                        if (rechargeCountElement) rechargeCountElement.textContent = '0';
+
+                        resolve({ totalRecharges: 0, rechargeCount: 0 });
+                    }
+                }, (error) => {
+                    console.error("Erreur lors de la récupération des recharges:", error);
+                    reject(error);
+                });
+            });
+        }
+
+        function calculateAndDisplayTotalWithdrawals(userId) {
+            const withdrawalHistoryRef = ref(database, `users/${userId}/withdrawalHistory`);
+            
+            onValue(withdrawalHistoryRef, (snapshot) => {
+                const history = snapshot.val();
+                
+                if (history) {
+                    const totalWithdrawalsAmount = Object.values(history).reduce((total, withdrawal) => {
+                        return total + (withdrawal.amount || 0);
+                    }, 0);
+                    updateTotalWithdrawals(totalWithdrawalsAmount);
+
+                    const withdrawalCountElement = document.getElementById('withdrawal-count');
+                    if (withdrawalCountElement) withdrawalCountElement.textContent = Object.keys(history).length;
+                } else {
+                    updateTotalWithdrawals(0);
+                    const withdrawalCountElement = document.getElementById('withdrawal-count');
+                    if (withdrawalCountElement) withdrawalCountElement.textContent = '0';
+                }
+            });
+        }
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                try {
+                    const userRef = ref(database, 'users/' + user.uid);
+                    const snapshot = await get(userRef);
+                    const userData = snapshot.val();
+
+                    if (userData) {
+                        if (userData.phoneNumber) updateUserIdentifier(userData.phoneNumber);
+                        if (userData.balance !== undefined) updateUserBalance(userData.balance);
+
+                        calculateAndDisplayTotalWithdrawals(user.uid);
+                        await calculateTotalRecharges(user.uid);
+                        await calculateTotalRevenues(user.uid);
+
+                        const withdrawalButton = document.getElementById('withdrawal-button');
+                        if (withdrawalButton) {
+                            withdrawalButton.addEventListener('click', async () => {
+                                const withdrawalAmountInput = document.getElementById('withdrawal-amount');
+                                const amount = parseFloat(withdrawalAmountInput.value);
+                                
+                                if (isNaN(amount) || amount <= 0) {
+                                    showErrorMessage("Veuillez entrer un montant valide");
+                                    return;
+                                }
+
+                                const result = await recordWithdrawal(user.uid, amount);
+                                if (result) {
+                                    withdrawalAmountInput.value = '';
+                                    alert(`Retrait de ${formatCurrency(amount)} effectué avec succès`);
+                                }
+                            });
+                        }
+                    }
+                } catch (error) {
+                    console.error("Erreur lors de la récupération des données:", error);
+                }
+            } else {
+                updateUserIdentifier("Non connecté");
+                updateUserBalance(0);
+                updateTotalWithdrawals(0);
+
+                const withdrawalCountElement = document.getElementById('withdrawal-count');
+                const totalRechargesElement = document.getElementById('total-recharge');
+                const rechargeCountElement = document.getElementById('recharge-count');
+                const totalRevenueElement = document.getElementById('total-revenue');
+
+                if (withdrawalCountElement) withdrawalCountElement.textContent = '0';
+                if (totalRechargesElement) totalRechargesElement.textContent = formatCurrency(0);
+                if (rechargeCountElement) rechargeCountElement.textContent = '0';
+                if (totalRevenueElement) totalRevenueElement.textContent = formatCurrency(0);
+            }
+        });
+    </script> 
+</body>
+</html>

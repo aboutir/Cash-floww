@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Recharge Mobile - Plateforme Professionnelle</title>
+<style>
+  /* Reset */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  :root {
+    --primary-gradient: linear-gradient(135deg, #a3bffa 0%, #668cff 100%);
+    --secondary-gradient: linear-gradient(135deg, #4facfe 0%, #00d4aa 100%);
+    --accent-color: #00b4d8;
+    --text-dark: #34495e;
+    --text-light: #7f8c8d;
+    --glass-bg: rgba(255 255 255 / 0.8);
+    --glass-border: rgba(102 126 234 / 0.2);
+    --shadow-md: 0 10px 25px rgba(0 180 216 / 0.3);
+    --border-radius-lg: 20px;
+
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    --spacing-lg: 20px;
+    --spacing-md: 15px;
+    --font-size-base: 1rem;
+    --font-size-xl: 2.2rem;
+  }
+  body {
+    font-family: var(--font-family);
+    background: var(--primary-gradient);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-lg);
+    position: relative;
+    overflow-x: hidden;
+    color: var(--text-dark);
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+      radial-gradient(circle at 20% 80%, rgba(255 255 255 / 0.1) 0%, transparent 60%),
+      radial-gradient(circle at 80% 20%, rgba(255 255 255 / 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(135 206 235 / 0.3) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: -1;
+    animation: float 6s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%,100% {transform: translateY(0);}
+    50% {transform: translateY(-10px);}
+  }
+  .container {
+    max-width: 500px;
+    width: 100%;
+    background: var(--glass-bg);
+    backdrop-filter: blur(15px);
+    border-radius: var(--border-radius-lg);
+    border: 1.5px solid var(--glass-border);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-md);
+    animation: slideUp 0.8s ease-out;
+    color: var(--text-dark);
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .header h1 {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    margin-bottom: 8px;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.1);
+  }
+  .header p {
+    color: var(--text-light);
+    font-weight: 500;
+    font-size: var(--font-size-base);
+  }
+  .form-group {
+    margin-bottom: var(--spacing-lg);
+  }
+  .form-label {
+    display: block;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 12px;
+    font-size: 0.95rem;
+    user-select: none;
+  }
+  .operators-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 15px;
+    margin-bottom: var(--spacing-md);
+  }
+  .operator-option {
+    display: none;
+  }
+  .operator-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 15px;
+    border: 2px solid rgba(0,0,0,0.1);
+    border-radius: 16px;
+    cursor: pointer;
+    background: rgba(255 255 255 / 0.7);
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+    user-select: none;
+  }
+  .operator-label::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255 255 255 / 0.4), transparent);
+    transition: left 0.5s;
+    border-radius: 16px;
+  }
+  .operator-label:hover::before {
+    left: 100%;
+  }
+  .operator-label:hover {
+    border-color: rgba(0,0,0,0.3);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0 0 0 / 0.15);
+    background: rgba(255 255 255 / 0.85);
+  }
+  .operator-option:checked + .operator-label {
+    border-color: var(--accent-color);
+    background: var(--secondary-gradient);
+    color: white;
+    transform: scale(1.05);
+    box-shadow: 0 0 25px var(--accent-color);
+  }
+  .operator-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+  }
+  .operator-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .operator-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: inherit;
+    transition: color 0.3s ease;
+  }
+  .input-group {
+    margin-bottom: var(--spacing-lg);
+  }
+  .form-input {
+    width: 100%;
+    padding: 16px 20px;
+    border: 2px solid #cbd5e1;
+    border-radius: 12px;
+    font-size: var(--font-size-base);
+    background: white;
+    color: #334155;
+    transition: all 0.3s ease;
+  }
+  .form-input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(0 180 216 / 0.15);
+  }
+  .quick-amounts {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: var(--spacing-lg);
+  }
+  .quick-amount-btn {
+    padding: 12px 16px;
+    border: 2px solid rgba(0,0,0,0.1);
+    border-radius: 10px;
+    background: white;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-align: center;
+    color: var(--text-dark);
+    transition: all 0.3s ease;
+    user-select: none;
+  }
+  .quick-amount-btn:hover {
+    border-color: var(--accent-color);
+    background: var(--secondary-gradient);
+    color: white;
+    transform: translateY(-2px);
+  }
+  .quick-amount-btn.selected {
+    border-color: var(--accent-color);
+    background: var(--accent-color);
+    color: white;
+    box-shadow: 0 0 15px var(--accent-color);
+    transform: scale(1.05);
+  }
+  .error-message {
+    color: #ef4444;
+    font-size: 0.85rem;
+    margin-top: 8px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    user-select: none;
+    min-height: 18px;
+  }
+  .submit-btn {
+    width: 100%;
+    padding: 18px;
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    user-select: none;
+  }
+  .submit-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255 255 255 / 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s ease, height 0.3s ease;
+  }
+  .submit-btn:hover::before {
+    width: 300px;
+    height: 300px;
+  }
+  .submit-btn:hover {
+    box-shadow: 0 15px 30px rgba(0 180 216 / 0.4);
+    background: var(--secondary-gradient);
+  }
+  .loading {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(255 255 255 / 0.9);
+    backdrop-filter: blur(10px);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+  }
+  .loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #f3f4f6;
+    border-top: 4px solid var(--accent-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin {
+    0% { transform: rotate(0deg);}
+    100% { transform: rotate(360deg);}
+  }
+  .notification {
+    display: none;
+    position: fixed;
+    top: 20px; right: 20px;
+    padding: 16px 24px;
+    border-radius: 12px;
+    color: white;
+    font-weight: 600;
+    z-index: 1000;
+    animation: slideIn 0.3s ease;
+  }
+  .notification.success {
+    background: linear-gradient(135deg, #10b981, #059669);
+  }
+  .notification.error-notification {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+  }
+  @keyframes slideIn {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  @media (max-width: 640px) {
+    .operators-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .quick-amounts {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="header" role="banner">
+      <h1>Recharge Mobile</h1>
+      <p>Rechargez votre crédit en toute sécurité</p>
+    </div>
+
+    <form id="rechargeForm" novalidate>
+      <div class="form-group">
+        <label class="form-label">Sélectionnez votre opérateur</label>
+        <div class="operators-grid">
+          <div>
+            <input type="radio" id="mtn" name="operator" value="mtn" class="operator-option" />
+            <label for="mtn" class="operator-label" role="radio" aria-checked="false" tabindex="0">
+              <div class="operator-logo mtn">
+                <img src="https://image.noelshack.com/fichiers/2025/35/4/1756415312-logo-mtn.jpg" alt="Logo MTN" />
+              </div>
+              <span class="operator-name">MTN</span>
+            </label>
+          </div>
+          <div>
+            <input type="radio" id="moov" name="operator" value="moov" class="operator-option" />
+            <label for="moov" class="operator-label" role="radio" aria-checked="false" tabindex="0">
+              <div class="operator-logo moov">
+                <img src="https://image.noelshack.com/fichiers/2025/35/4/1756415257-icon-assistance-moovci-plan-de-travail-1-1.png" alt="Logo Moov" />
+              </div>
+              <span class="operator-name">Moov</span>
+            </label>
+          </div>
+          <div>
+            <input type="radio" id="orange" name="operator" value="orange" class="operator-option" />
+            <label for="orange" class="operator-label" role="radio" aria-checked="false" tabindex="0">
+              <div class="operator-logo orange">
+                <img src="https://image.noelshack.com/fichiers/2025/35/4/1756415196-orange-logo-svg.png" alt="Logo Orange" />
+              </div>
+              <span class="operator-name">Orange</span>
+            </label>
+          </div>
+          <div>
+            <input type="radio" id="wave" name="operator" value="wave" class="operator-option" />
+            <label for="wave" class="operator-label" role="radio" aria-checked="false" tabindex="0">
+              <div class="operator-logo wave">
+                <img src="https://image.noelshack.com/fichiers/2025/35/4/1756415140-images-1.png" alt="Logo Wave" />
+              </div>
+              <span class="operator-name">Wave</span>
+            </label>
+          </div>
+          <div>
+            <input type="radio" id="usdt" name="operator" value="usdt" class="operator-option" />
+            <label for="usdt" class="operator-label" role="radio" aria-checked="false" tabindex="0">
+              <div class="operator-logo usdt">
+                <img src="https://image.noelshack.com/fichiers/2025/35/4/1756415381-images-2.png" alt="Logo USDT" />
+              </div>
+              <span class="operator-name">USDT</span>
+            </label>
+          </div>
+        </div>
+        <div id="operatorError" class="error-message" aria-live="polite"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="phone" class="form-label">Numéro de téléphone</label>
+        <div class="input-group">
+          <input type="tel" id="phone" class="form-input" placeholder="Ex: 0123456789" required aria-describedby="phoneError" />
+        </div>
+        <div id="phoneError" class="error-message" aria-live="polite"></div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Montant de la recharge</label>
+        <div class="quick-amounts" role="group" aria-label="Sélection rapide de montant">
+          <button type="button" class="quick-amount-btn" data-amount="5700">5 700 FCFA</button>
+         <button type="button" class="quick-amount-btn" data-amount="15000">15 000 FCFA</button>
+          <button type="button" class="quick-amount-btn" data-amount="25000">25 000 FCFA</button>
+          <button type="button" class="quick-amount-btn" data-amount="55000">55 000 FCFA</button>
+          <button type="button" class="quick-amount-btn" data-amount="100000">100 000 FCFA</button>
+          <button type="button" class="quick-amount-btn" data-amount="200000">200 000 FCFA</button>
+        </div>
+        <div class="input-group">
+          <input type="number" id="amount" class="form-input" placeholder="Ou saisissez un montant personnalisé" min="3000" required aria-describedby="amountError" />
+        </div>
+        <div id="amountError" class="error-message" aria-live="polite"></div>
+      </div>
+
+      <button type="submit" class="submit-btn">Procéder à la recharge</button>
+    </form>
+  </div>
+
+  <div class="loading" role="status" aria-live="polite" aria-label="Chargement en cours">
+    <div class="loading-spinner"></div>
+  </div>
+
+  <div id="notification" class="notification" role="alert" aria-live="assertive"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
+    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDRrkHLMeb6dwgT9OnLRDnTbsAkSxO3qoQ",
+      authDomain: "maison-c53c7.firebaseapp.com",
+      databaseURL: "https://maison-c53c7-default-rtdb.firebaseio.com",
+      projectId: "maison-c53c7",
+      storageBucket: "maison-c53c7.firebasestorage.app",
+      messagingSenderId: "720174612151",
+      appId: "1:720174612151:web:d7af687cce1cf33dde1732"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('rechargeForm');
+      const phoneInput = document.getElementById('phone');
+      const amountInput = document.getElementById('amount');
+      const phoneError = document.getElementById('phoneError');
+      const amountError = document.getElementById('amountError');
+      const operatorOptions = document.querySelectorAll('.operator-option');
+      const quickAmountBtns = document.querySelectorAll('.quick-amount-btn');
+      const loading = document.querySelector('.loading');
+
+      // Numéros opérateurs
+      const operatorNumbers = {
+        'mtn': '22505',
+        'moov': '2250173750225',
+        'orange': 'indisponible',
+        'wave': '2250798234023',
+        'usdt': 'indisponible'
+      };
+
+      function showLoading() {
+        loading.style.display = 'flex';
+      }
+      function hideLoading() {
+        loading.style.display = 'none';
+      }
+      function showNotification(message, type = 'success') {
+        const notification = document.getElementById('notification');
+        notification.textContent = message;
+        notification.className = `notification ${type}`;
+        notification.style.display = 'block';
+        setTimeout(() => {
+          notification.style.display = 'none';
+        }, 5000);
+      }
+      function showError(elementId, message) {
+        const errorElement = document.getElementById(elementId);
+        if(errorElement){
+          errorElement.textContent = message;
+          errorElement.style.opacity = '1';
+        }
+      }
+      function clearErrors() {
+        if(phoneError) {
+          phoneError.textContent = '';
+          phoneError.style.opacity = '0';
+        }
+        if(amountError) {
+          amountError.textContent = '';
+          amountError.style.opacity = '0';
+        }
+      }
+      function isValidPhoneNumber(phone) {
+        return /^[0-9]{8,10}$/.test(phone);
+      }
+      function validateForm(operator, phone, amount) {
+        clearErrors();
+        let isValid = true;
+        if (!operator) {
+          showError('operatorError', 'Veuillez sélectionner un opérateur');
+          isValid = false;
+        }
+        if (!isValidPhoneNumber(phone)) {
+          showError('phoneError', 'Numéro de téléphone invalide');
+          isValid = false;
+        }
+        if (amount < 3000) {
+          showError('amountError', 'Le montant minimum est de 3000 FCFA');
+          isValid = false;
+        }
+        return isValid;
+      }
+      operatorOptions.forEach(option => {
+        option.addEventListener('change', function() {
+          operatorOptions.forEach(opt => {
+            const logo = opt.parentNode.querySelector('.operator-logo');
+            if(logo) logo.style.transform = 'scale(1)';
+          });
+          const logo = this.parentNode.querySelector('.operator-logo');
+          if(logo) logo.style.transform = 'scale(1.05)';
+        });
+      });
+      quickAmountBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          quickAmountBtns.forEach(b => b.classList.remove('selected'));
+          this.classList.add('selected');
+          amountInput.value = this.getAttribute('data-amount');
+          amountInput.dispatchEvent(new Event('input'));
+        });
+      });
+      amountInput.addEventListener('input', () => {
+        quickAmountBtns.forEach(btn => btn.classList.remove('selected'));
+      });
+      phoneInput.addEventListener('input', () => {
+        if(phoneError){
+          phoneError.textContent = '';
+          phoneError.style.opacity = '0';
+        }
+      });
+      amountInput.addEventListener('input', () => {
+        const amount = parseInt(amountInput.value, 10);
+        if (amount < 3000) {
+          showError('amountError', 'Le montant minimum est de 3000 FCFA');
+        } else {
+          if(amountError){
+            amountError.textContent = '';
+            amountError.style.opacity = '0';
+          }
+        }
+      });
+      onAuthStateChanged(auth, user => {
+        if (!user) {
+          showNotification('Veuillez vous connecter pour continuer', 'error-notification');
+          setTimeout(() => {
+            window.location.href = 'login.html';
+          }, 2000);
+        }
+      });
+      form.addEventListener('submit', async e => {
+        e.preventDefault();
+        const user = auth.currentUser;
+        if (!user) {
+          showNotification('Veuillez vous connecter pour continuer', 'error-notification');
+          return;
+        }
+        const operator = document.querySelector('input[name="operator"]:checked')?.value;
+        const phone = phoneInput.value.trim();
+        const amount = parseInt(amountInput.value, 10);
+        if (!validateForm(operator, phone, amount)) {
+          return;
+        }
+        showLoading();
+        try {
+          const rechargeData = {
+            operator,
+            phone,
+            amount,
+            operatorNumber: operatorNumbers[operator],
+            date: new Date().toISOString(),
+            userId: user.uid,
+            userEmail: user.email,
+            status: 'pending'
+          };
+          sessionStorage.setItem('rechargeData', JSON.stringify(rechargeData));
+          const rechargeRef = ref(db, `recharges/${user.uid}/${Date.now()}`);
+          await set(rechargeRef, rechargeData);
+          window.location.href = 'confirmation.html';
+        } catch (error) {
+          console.error('Erreur:', error);
+          showNotification('Une erreur est survenue. Veuillez réessayer.', 'error-notification');
+        } finally {
+          hideLoading();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

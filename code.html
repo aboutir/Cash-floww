@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codes Bonus EXA ECS</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Arial', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f6f8fb 0%, #d5e2f2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #2d3748;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+            padding: 20px 0;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            color: #1a365d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .header p {
+            color: #4a5568;
+            line-height: 1.7;
+            font-size: 1.1em;
+        }
+
+        #userBalance {
+            background: #4299e1;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        #userBalance.balance-flash {
+            background: #3182ce;
+            transform: scale(1.02);
+        }
+
+        .balance-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        #balanceAmount {
+            font-size: 1.4em;
+            font-weight: bold;
+        }
+
+        .bonus-form {
+            background: #f8fafc;
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 25px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: #2d3748;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 45px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-group i {
+            position: absolute;
+            left: 15px;
+            top: 45px;
+            color: #4a5568;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: #4299e1;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            background: #3182ce;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(66, 153, 225, 0.2);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .info-box {
+            margin-top: 30px;
+            padding: 20px;
+            background: #ebf8ff;
+            border-left: 4px solid #4299e1;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .info-box i {
+            font-size: 24px;
+            color: #4299e1;
+        }
+
+        .info-box p {
+            color: #2c5282;
+            line-height: 1.6;
+            font-size: 1.05em;
+        }
+
+        #loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4299e1;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #result {
+            display: none;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        #result.success {
+            background: #c6f6d5;
+            border: 1px solid #9ae6b4;
+            color: #276749;
+        }
+
+        #result.error {
+            background: #fed7d7;
+            border: 1px solid #feb2b2;
+            color: #c53030;
+        }
+
+        .bonus-amount {
+            font-size: 1.4em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .bonus-form {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+        <div id="userBalance">
+            <div class="balance-label">Votre solde</div>
+            <div id="balanceAmount">0 FCFA</div>
+        </div>
+
+       
+
+        <form class="bonus-form" onsubmit="return false;">
+            <div class="form-group">
+                <label for="code">Entrez votre code bonus</label>
+                <i class="fas fa-ticket-alt"></i>
+                <input 
+                    type="text" 
+                    id="code" 
+                    placeholder="Cadeau"
+                    required
+                >
+            </div>
+            <button id="validateButton" type="submit" class="submit-btn" disabled>
+                <i class="fas fa-check-circle"></i>
+                Valider mon code
+            </button>
+        </form>
+
+        <div id="loading">
+            <div class="loading-spinner"></div>
+        </div>
+
+        <div id="result"></div>
+    </div>
+
+<script type="module">
+// Import des modules Firebase nécessaires
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
+import { 
+    getDatabase, ref, get, set, onValue, push, 
+    query, orderByChild, equalTo 
+} from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
+import { getStorage } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-storage.js";
+
+// Configuration Firebase
+const firebaseConfig = {
+    apiKey: "AIzaSyDRrkHLMeb6dwgT9OnLRDnTbsAkSxO3qoQ",
+    authDomain: "maison-c53c7.firebaseapp.com",
+    databaseURL: "https://maison-c53c7-default-rtdb.firebaseio.com",
+    projectId: "maison-c53c7",
+    storageBucket: "maison-c53c7.firebasestorage.app",
+    messagingSenderId: "720174612151",
+    appId: "1:720174612151:web:d7af687cce1cf33dde1732"
+};
+
+// Initialisation Firebase
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
+
+// État global
+let currentUser = null;
+let isProcessing = false;
+
+// Utilitaires
+const formatFCFA = (amount) => `${amount.toLocaleString('fr-FR')} FCFA`;
+
+const showResult = (message, type) => {
+    const result = document.getElementById('result');
+    document.getElementById('loading').style.display = 'none';
+    result.innerHTML = message;
+    result.className = `result ${type}`;
+    result.style.display = 'block';
+    setTimeout(() => result.style.display = 'none', 5000);
+};
+
+// Gestion du solde utilisateur
+async function updateUserBalance() {
+    if (!currentUser) return;
+    
+    const snapshot = await get(ref(db, `users/${currentUser.uid}`));
+    const balance = snapshot.val()?.balance || 0;
+    
+    const balanceElement = document.getElementById('balanceAmount');
+    balanceElement.textContent = formatFCFA(balance);
+    
+    const balanceContainer = document.getElementById('userBalance');
+    balanceContainer.classList.add('balance-flash');
+    setTimeout(() => balanceContainer.classList.remove('balance-flash'), 500);
+}
+
+// Validation du code bonus
+async function validateCode() {
+    if (isProcessing) return;
+    isProcessing = true;
+
+    const codeInput = document.getElementById('code');
+    const validateButton = document.getElementById('validateButton');
+    const loading = document.getElementById('loading');
+
+    try {
+        validateButton.disabled = true;
+        loading.style.display = 'block';
+
+        const code = codeInput.value.trim().toUpperCase();
+        if (!code) {
+            showResult('Veuillez entrer un code.', 'error');
+            return;
+        }
+
+        // Vérification du code
+        const bonusCodesRef = ref(db, 'bonusCodes');
+        const codeQuery = query(bonusCodesRef, orderByChild('code'), equalTo(code));
+        const snapshot = await get(codeQuery);
+
+        if (!snapshot.exists()) {
+            showResult('Code invalide ou expiré.', 'error');
+            return;
+        }
+
+        const [codeKey, codeData] = Object.entries(snapshot.val())[0];
+        const currentTime = Date.now();
+
+        if (currentTime > codeData.expiresAt) {
+            showResult('Ce code a expiré.', 'error');
+            return;
+        }
+
+        if (codeData.used && codeData.usedBy === currentUser.uid) {
+            showResult('Vous avez déjà utilisé ce code.', 'error');
+            return;
+        }
+
+        // Mise à jour du code et du solde
+        await Promise.all([
+            set(ref(db, `bonusCodes/${codeKey}`), {
+                ...codeData,
+                used: true,
+                usedBy: currentUser.uid,
+                usedAt: currentTime
+            }),
+            set(ref(db, `users/${currentUser.uid}/balance`), 
+                (await get(ref(db, `users/${currentUser.uid}/balance`))).val() + codeData.amount
+            ),
+            set(ref(db, `transactions/${currentUser.uid}/${Date.now()}`), {
+                type: 'bonus',
+                amount: codeData.amount,
+                timestamp: currentTime
+            })
+        ]);
+
+        await updateUserBalance();
+        showResult(`
+            <div>🎉 Félicitations !</div>
+            <div class="bonus-amount">+${formatFCFA(codeData.amount)}</div>
+            <div>Bonus crédité avec succès</div>
+        `, 'success');
+
+        codeInput.value = '';
+
+    } catch (error) {
+        console.error('Erreur:', error);
+        showResult('Une erreur est survenue. Veuillez réessayer.', 'error');
+    } finally {
+        isProcessing = false;
+        validateButton.disabled = false;
+        loading.style.display = 'none';
+    }
+}
+
+// Event Listeners
+document.getElementById('code').addEventListener('input', (e) => {
+    document.getElementById('validateButton').disabled = !e.target.value.trim();
+});
+
+document.getElementById('validateButton').addEventListener('click', validateCode);
+
+document.getElementById('code').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter' && !e.target.disabled) validateCode();
+});
+
+// Authentication
+onAuthStateChanged(auth, async (user) => {
+    currentUser = user;
+    if (user) {
+        await updateUserBalance();
+    } else {
+        window.location.href = '/login.html';
+    }
+});
+</script>
+</body>
+</html>

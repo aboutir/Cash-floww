@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historique des Transactions - Maison</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #87CEEB;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .transactions-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            text-align: center;
+            position: relative;
+            padding-bottom: 15px;
+            display: none;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        #historyList {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .history-item {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 1px solid #e1e8ed;
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .history-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(to right, #667eea, #764ba2);
+        }
+
+        .history-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            border-color: #667eea;
+        }
+
+        .history-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .history-info:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .info-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 1rem;
+            color: #2c3e50;
+            font-weight: 500;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 10px;
+        }
+
+        .status-success {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .status-pending {
+            background: linear-gradient(135deg, #ffc107, #fd7e14);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+        }
+
+        .status-failed {
+            background: linear-gradient(135deg, #dc3545, #e83e8c);
+            color: white;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        .processing-info, .reject-reason {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            margin-top: 10px;
+            font-style: italic;
+            color: #6c757d;
+        }
+
+        .reject-reason {
+            border-left-color: #dc3545;
+            background: #fff5f5;
+            color: #721c24;
+        }
+
+        .no-records {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+            font-size: 1.2rem;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 12px;
+            border: 2px dashed #dee2e6;
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .header {
+                padding: 30px 20px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .transactions-section {
+                padding: 20px;
+            }
+
+            .history-info {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animations d'entrée pour les éléments */
+        .history-item {
+            animation: slideInLeft 0.5s ease-out;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Style pour les boutons futurs */
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div id="historyList">
+        <div class="loading">
+            <div class="spinner"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Import des modules Firebase nécessaires
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
+        import { 
+            getDatabase, 
+            ref, 
+            get, 
+            set, 
+            update,
+            onValue,
+            query,
+            orderByChild,
+            equalTo    // Ajout de l'import pour le filtrage
+        } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
+        import { getStorage } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-storage.js";
+
+        // Configuration Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDRrkHLMeb6dwgT9OnLRDnTbsAkSxO3qoQ",
+            authDomain: "maison-c53c7.firebaseapp.com",
+            databaseURL: "https://maison-c53c7-default-rtdb.firebaseio.com",
+            projectId: "maison-c53c7",
+            storageBucket: "maison-c53c7.firebasestorage.app",
+            messagingSenderId: "720174612151",
+            appId: "1:720174612151:web:d7af687cce1cf33dde1732"
+        };
+
+        try {
+            // Initialisation de Firebase
+            const app = initializeApp(firebaseConfig);
+            const auth = getAuth(app);
+            const db = getDatabase(app);
+            const creditedTransactions = new Set();
+
+            // Fonction de mise à jour du solde utilisateur
+            async function updateUserBalance(userId, amount, transactionId) {
+                if (creditedTransactions.has(transactionId)) return;
+
+                try {
+                    const userRef = ref(db, `users/${userId}`);
+                    const snapshot = await get(userRef);
+
+                    if (snapshot.exists()) {
+                        const userData = snapshot.val();
+                        const currentBalance = userData.solde || 0;
+                        const newBalance = currentBalance + parseFloat(amount);
+
+                        const updates = {};
+                        updates[`users/${userId}/solde`] = newBalance;
+                        updates[`transactions/${transactionId}/credited`] = true;
+
+                        await update(ref(db), updates);
+                        creditedTransactions.add(transactionId);
+                    }
+                } catch (error) {
+                    console.error('Erreur de mise à jour du solde:', error);
+                }
+            }
+
+            // Fonction de formatage de date
+            function formatDate(dateString) {
+                try {
+                    const date = new Date(dateString);
+                    if (isNaN(date.getTime())) throw new Error('Date invalide');
+                    
+                    return new Intl.DateTimeFormat('fr-FR', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    }).format(date).replace(',', ' à');
+                } catch (error) {
+                    return 'Date non disponible';
+                }
+            }
+
+            // Fonction pour obtenir la classe CSS du statut
+            function getStatusClass(status) {
+                const statusClasses = {
+                    success: 'status-success',
+                    pending: 'status-pending',
+                    failed: 'status-failed'
+                };
+                return statusClasses[status] || '';
+            }
+
+            // Fonction de traduction du statut
+            function translateStatus(status) {
+                const translations = {
+                    success: 'Crédité',
+                    pending: 'En cours de vérification',
+                    failed: 'Échec'
+                };
+                return translations[status] || status;
+            }
+
+            // Fonction de création d'un élément d'historique
+            function createHistoryItem(transaction, userId) {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.dataset.transactionId = transaction.transactionId || '';
+
+                if (transaction.status === 'success' && !transaction.credited && userId) {
+                    updateUserBalance(userId, transaction.amount || 0, transaction.transactionId);
+                }
+
+                historyItem.innerHTML = `
+                    <div class="history-info">
+                        <div class="info-group">
+                            <span class="info-label">Montant</span>
+                            <span class="info-value">${transaction.amount || 0} FCFA</span>
+                        </div>
+                        <div class="info-group">
+                            <span class="info-label">Numéro rechargé</span>
+                            <span class="info-value">${transaction.phone || 'Non spécifié'}</span>
+                        </div>
+                    </div>
+                    <div class="history-info">
+                        <div class="info-group">
+                            <span class="info-label">Opérateur</span>
+                            <span class="info-value">${transaction.operator ? transaction.operator.toUpperCase() : 'Non spécifié'}</span>
+                        </div>
+                        <div class="info-group">
+                            <span class="info-label">ID Transaction</span>
+                            <span class="info-value">${transaction.transactionId || 'Non spécifié'}</span>
+                        </div>
+                    </div>
+                    <div class="history-info">
+                        <div class="info-group">
+                            <span class="info-label">Date</span>
+                            <span class="info-value">${formatDate(transaction.date)}</span>
+                        </div>
+                        <div class="info-group">
+                            <span class="info-label">Numéro de paiement</span>
+                            <span class="info-value">${transaction.userPaymentNumber || 'Non spécifié'}</span>
+                        </div>
+                        ${transaction.processedDate ? `
+                            <div class="processing-info">Traité le ${formatDate(transaction.processedDate)}</div>
+                        ` : ''}
+                        ${transaction.status === 'failed' && transaction.rejectReason ? `
+                            <div class="reject-reason">Motif du rejet: ${transaction.rejectReason}</div>
+                        ` : ''}
+                        <div class="status ${getStatusClass(transaction.status || 'pending')}">
+                            ${translateStatus(transaction.status || 'pending')}
+                        </div>
+                    </div>
+                `;
+
+                return historyItem;
+            }
+
+            // Fonction d'affichage des transactions
+            function displayTransactions(transactions, userId) {
+                const historyList = document.getElementById('historyList');
+                if (!historyList) return;
+                
+                if (!transactions || Object.keys(transactions).length === 0) {
+                    historyList.innerHTML = '<div class="no-records">Aucune transaction trouvée</div>';
+                    return;
+                }
+
+                // Filtrer les transactions pour ne garder que celles de l'utilisateur courant
+                const userTransactions = Object.entries(transactions)
+                    .filter(([_, transaction]) => transaction.userId === userId)
+                    .map(([id, transaction]) => ({...transaction, id}))
+                    .sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+
+                if (userTransactions.length === 0) {
+                    historyList.innerHTML = '<div class="no-records">Aucune transaction trouvée</div>';
+                    return;
+                }
+
+                const fragment = document.createDocumentFragment();
+                let hasNewItems = false;
+
+                userTransactions.forEach(transaction => {
+                    const existingItem = document.querySelector(
+                        `[data-transaction-id="${transaction.transactionId}"]`
+                    );
+
+                    if (existingItem) {
+                        const newItem = createHistoryItem(transaction, userId);
+                        if (existingItem.innerHTML !== newItem.innerHTML) {
+                            existingItem.parentNode.replaceChild(newItem, existingItem);
+                        }
+                    } else {
+                        fragment.appendChild(createHistoryItem(transaction, userId));
+                        hasNewItems = true;
+                    }
+                });
+
+                if (hasNewItems) {
+                    if (historyList.children.length === 0) {
+                        historyList.appendChild(fragment);
+                    } else {
+                        historyList.insertBefore(fragment, historyList.firstChild);
+                    }
+                }
+
+                const currentIds = new Set(userTransactions.map(t => t.transactionId));
+                Array.from(historyList.children).forEach(child => {
+                    const id = child.dataset.transactionId;
+                    if (id && !currentIds.has(id)) {
+                        child.remove();
+                    }
+                });
+            }
+
+            // Écouteur d'authentification
+            onAuthStateChanged(auth, (user) => {
+                const historyList = document.getElementById('historyList');
+                if (!historyList) return;
+                
+                if (user) {
+                    // Création de la requête avec query, orderByChild et equalTo pour filtrer par userId
+                    const transactionsRef = query(
+                        ref(db, 'transactions'),
+                        orderByChild('userId'),
+                        equalTo(user.uid)
+                    );
+                    
+                    // Écoute des changements
+                    onValue(transactionsRef, (snapshot) => {
+                        try {
+                            const transactions = snapshot.val();
+                            displayTransactions(transactions, user.uid);
+                        } catch (error) {
+                            console.error('Erreur lors de la récupération des transactions:', error);
+                            if (historyList) {
+                                historyList.innerHTML = '<div class="no-records">Erreur lors du chargement des transactions</div>';
+                            }
+                        }
+                    }, (error) => {
+                        console.error('Erreur Firebase:', error);
+                        if (historyList) {
+                            historyList.innerHTML = '<div class="no-records">Erreur de connexion</div>';
+                        }
+                    });
+                } else {
+                    historyList.innerHTML = '<div class="no-records">Veuillez vous connecter pour voir votre historique</div>';
+                }
+            });
+
+        } catch (error) {
+            console.error('Erreur d\'initialisation:', error);
+            const historyList = document.getElementById('historyList');
+            if (historyList) {
+                historyList.innerHTML = '<div class="no-records">Erreur d\'initialisation de l\'application</div>';
+            }
+        }
+    </script>
+</body>
+</html>

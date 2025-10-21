@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cash flow</title>
+
+<!-- Font Awesome pour icônes -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+<!-- flag-icons CDN pour drapeaux -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.3.2/css/flag-icons.min.css" />
+
+<style>
+  /* (Styles inchangés depuis dernière version, voir message précédent) */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #fff;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    color: #222;
+  }
+  ::placeholder {
+    color: rgba(0,0,0,0.4);
+  }
+  .container {
+    background: #fff;
+    overflow: hidden;
+    width: 100%;
+    max-width: 900px;
+    min-height: 600px;
+    display: flex;
+    position: relative;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    border-radius: 12px;
+    color: #222;
+  }
+  .form-container {
+    flex: 1;
+    padding: 60px 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: all 0.6s ease-in-out;
+    max-width: 380px;
+    background: #fafafa;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.05);
+    color: #222;
+    position: relative;
+  }
+  .sign-up-container {transform: translateX(100%);opacity: 0;z-index: 1;}
+  .sign-in-container {transform: translateX(0);opacity: 1;z-index: 2;}
+  .container.right-panel-active .sign-up-container {transform: translateX(0);opacity: 1;z-index: 5;}
+  .container.right-panel-active .sign-in-container {transform: translateX(-100%);opacity: 0;z-index: 1;}
+  h1 {font-weight: 700;margin-bottom: 20px;color: #222;font-size: 2em;}
+  p {font-size: 16px;font-weight: 400;line-height: 1.6;margin: 20px 0 30px;color: #444;}
+  .form-group {margin-bottom: 20px;position: relative;}
+  .input-wrapper {position: relative;display: flex;align-items: center;}
+  .input-icon {position: absolute;left: 15px;color: #667eea;font-size: 16px;z-index: 1;}
+  input, select.country-select {
+    background-color: #fff;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    padding: 15px 20px 15px 45px;
+    font-size: 16px;
+    width: 100%;
+    color: #222;
+    transition: all 0.3s ease;
+    cursor: text;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+  select.country-select {
+    padding-left: 15px;
+    cursor: pointer;
+    padding-right: 45px;
+  }
+  input:focus, select.country-select:focus {
+    outline: none;
+    border-color: #667eea;
+    background-color: #f0f4ff;
+    box-shadow: 0 0 8px #667eea;
+    color: #222;
+  }
+  input:focus + .input-icon, select.country-select:focus + .input-icon {
+    color: #764ba2;
+  }
+  select.country-select {
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%236674ea" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 16px 16px;
+  }
+  button {
+    border-radius: 25px;
+    border: none;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 15px 45px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  button:hover {
+    background: linear-gradient(45deg, #7e88ff, #b399ff);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+  }
+  button:active {transform: translateY(0);}
+  .ghost {
+    background: transparent;
+    border: 2px solid #667eea;
+    color: #667eea;
+  }
+  .ghost:hover {
+    background: rgba(102, 126, 234, 0.1);
+    transform: translateY(-2px);
+  }
+  .error-message {
+    color: #e74c3c;
+    font-size: 14px;
+    margin-top: 10px;
+    display: none;
+    padding: 10px;
+    background: rgba(231, 76, 60, 0.1);
+    border-radius: 5px;
+    border-left: 4px solid #e74c3c;
+  }
+  .success-message {
+    color: #27ae60;
+    font-size: 14px;
+    margin-top: 10px;
+    display: none;
+    padding: 10px;
+    background: rgba(39, 174, 96, 0.1);
+    border-radius: 5px;
+    border-left: 4px solid #27ae60;
+  }
+  .referral-status {
+    font-size: 14px;
+    margin-top: 10px;
+    padding: 8px 12px;
+    border-radius: 5px;
+    display: none;
+  }
+  .referral-status.valid {
+    background: rgba(39, 174, 96, 0.1);
+    color: #27ae60;
+    border-left: 4px solid #27ae60;
+  }
+  .referral-status.invalid {
+    background: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+    border-left: 4px solid #e74c3c;
+  }
+  .social-container {
+    margin: 20px 0;
+  }
+  .social-container a {
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 5px;
+    height: 40px;
+    width: 40px;
+    transition: all 0.3s ease;
+    color: #333;
+    text-decoration: none;
+  }
+  .social-container a:hover {
+    border-color: #667eea;
+    color: #667eea;
+    transform: translateY(-2px);
+  }
+  .flag-display {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 24px;
+    pointer-events: none;
+  }
+  @media (max-width: 768px) {
+    .container {
+      flex-direction: column;
+      max-width: 400px;
+      min-height: auto;
+    }
+    .form-container {
+      padding: 40px 30px;
+      transform: none !important;
+      opacity: 1 !important;
+      max-width: none;
+    }
+    .sign-up-container {
+      display: none;
+    }
+    .container.right-panel-active .sign-up-container {
+      display: flex;
+    }
+    .container.right-panel-active .sign-in-container {
+      display: none;
+    }
+    .mobile-switch {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .mobile-switch button {
+      background: transparent;
+      color: #667eea;
+      border: 2px solid #667eea;
+      padding: 10px 20px;
+      font-size: 14px;
+    }
+  }
+  .loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(102, 126, 234, 0.3);
+    border-radius: 50%;
+    border-top-color: #667eea;
+    animation: spin 1s ease-in-out infinite;
+    margin-right: 10px;
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 30px;
+    gap: 12px;
+  }
+  .logo-icon {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 900;
+    box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+    position: relative;
+    overflow: hidden;
+  }
+  .logo-icon::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #667eea, #764ba2, #667eea);
+    border-radius: 14px;
+    z-index: -1;
+    animation: pulse 2s ease-in-out infinite alternate;
+  }
+  @keyframes pulse {
+    0% { opacity: 0.7; }
+    100% { opacity: 1; }
+  }
+  .logo-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    color: #222;
+  }
+  .logo-main {
+    font-size: 24px;
+    font-weight: 900;
+    color: #222;
+    letter-spacing: 1px;
+  }
+  .logo-sub {
+    font-size: 12px;
+    color: #666;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: -2px;
+  }
+  .fade-in {
+    animation: fadeIn 0.5s ease-in;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+<div class="container" id="container">
+  <!-- Formulaire d'inscription -->
+  <div class="form-container sign-up-container">
+    <div class="logo">
+      <div class="logo-icon">Cash</div>
+      <div class="logo-text">
+        <div class="logo-main">Cash flow</div>
+        <div class="logo-sub">Investissement</div>
+      </div>
+    </div>
+    <form id="signupFormData">
+      <h1>Créer un compte</h1>
+      <div class="social-container">
+        <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" class="social"><i class="fab fa-google"></i></a>
+        <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+      </div>
+      <p>ou utilisez votre téléphone pour l'inscription</p>
+      <div class="form-group">
+        <div class="input-wrapper">
+          <input type="text" id="signupUsername" placeholder="Nom d'utilisateur" required />
+          <i class="fas fa-user input-icon"></i>
+        </div>
+      </div>
+      <div class="form-group" style="position:relative;">
+        <div class="input-wrapper">
+          <select id="signupCountry" class="country-select" required>
+            <option value="" disabled selected>Sélectionnez votre pays</option>
+            <option value="Côte d'Ivoire" data-code="ci" data-phone="+225">Côte d'Ivoire (+225)</option>
+            <option value="Bénin" data-code="bj" data-phone="+229">Bénin (+229)</option>
+            <option value="Togo" data-code="tg" data-phone="+228">Togo (+228)</option>
+            <option value="Mali" data-code="ml" data-phone="+223">Mali (+223)</option>
+            <option value="Sénégal" data-code="sn" data-phone="+221">Sénégal (+221)</option>
+            <option value="Burkina Faso" data-code="bf" data-phone="+226">Burkina Faso (+226)</option>
+          </select>
+          <span id="flagSignup" class="flag-display fi"></span>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="input-wrapper">
+          <input type="tel" id="signupTelephone" placeholder="Numéro de téléphone" required />
+          <i class="fas fa-phone input-icon"></i>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="input-wrapper">
+          <input type="password" id="signupPassword" placeholder="Mot de passe" required />
+          <i class="fas fa-lock input-icon"></i>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="input-wrapper">
+          <input type="password" id="confirmPassword" placeholder="Confirmer le mot de passe" required />
+          <i class="fas fa-lock input-icon"></i>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="input-wrapper">
+          <input type="text" id="referralCode" placeholder="Code de parrainage (optionnel)" />
+          <i class="fas fa-gift input-icon"></i>
+        </div>
+        <div id="referralStatus" class="referral-status"></div>
+      </div>
+      <div id="signupError" class="error-message"></div>
+      <div id="signupSuccess" class="success-message"></div>
+      <button type="submit">S'inscrire</button>
+    </form>
+    <div class="mobile-switch">
+      <button type="button" class="ghost" id="signInMobile">Déjà un compte ? Se connecter</button>
+    </div>
+  </div>
+
+  <!-- Formulaire de connexion -->
+  <div class="form-container sign-in-container">
+    <div class="logo">
+      <div class="logo-icon">Cash</div>
+      <div class="logo-text">
+        <div class="logo-main">Cash flow</div>
+        <div class="logo-sub">Investissement</div>
+      </div>
+    </div>
+    <form id="loginFormData">
+      <h1>Se connecter</h1>
+      <div class="social-container">
+        <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" class="social"><i class="fab fa-google"></i></a>
+        <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+      </div>
+      <p>ou utilisez votre compte</p>
+      <div class="form-group" style="position:relative;">
+        <div class="input-wrapper">
+          <select id="loginCountry" class="country-select" required>
+            <option value="" disabled selected>Sélectionnez votre pays</option>
+            <option value="Côte d'Ivoire" data-code="ci" data-phone="+225">Côte d'Ivoire (+225)</option>
+            <option value="Bénin" data-code="bj" data-phone="+229">Bénin (+229)</option>
+            <option value="Togo" data-code="tg" data-phone="+228">Togo (+228)</option>
+            <option value="Mali" data-code="ml" data-phone="+223">Mali (+223)</option>
+            <option value="Sénégal" data-code="sn" data-phone="+221">Sénégal (+221)</option>
+            <option value="Burkina Faso" data-code="bf" data-phone="+226">Burkina Faso (+226)</option>
+          </select>
+          <span id="flagLogin" class="flag-display fi"></span>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="input-wrapper">
+          <input type="tel" id="loginTelephone" placeholder="Numéro de téléphone" required />
+          <i class="fas fa-phone input-icon"></i>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="input-wrapper">
+          <input type="password" id="loginPassword" placeholder="Mot de passe" required />
+          <i class="fas fa-lock input-icon"></i>
+        </div>
+      </div>
+      <div id="loginError" class="error-message"></div>
+      <a href="#" style="color: #667eea; text-decoration: none; font-size: 14px; margin: 10px 0;">Mot de passe oublié ?</a>
+      <button type="submit">Se connecter</button>
+    </form>
+    <div class="mobile-switch">
+      <button type="button" class="ghost" id="signUpMobile">Pas de compte ? S'inscrire</button>
+    </div>
+  </div>  
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
+import { getDatabase, ref, get, set, update } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDRrkHLMeb6dwgT9OnLRDnTbsAkSxO3qoQ",
+  authDomain: "maison-c53c7.firebaseapp.com",
+  databaseURL: "https://maison-c53c7-default-rtdb.firebaseio.com",
+  projectId: "maison-c53c7",
+  storageBucket: "maison-c53c7.firebasestorage.app",
+  messagingSenderId: "720174612151",
+  appId: "1:720174612151:web:d7af687cce1cf33dde1732",
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const database = getDatabase(app);
+
+class Utils {
+  static generateReferralCode() {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    return Array.from({ length: 6 }, () =>
+      chars.charAt(Math.floor(Math.random() * chars.length))
+    ).join("");
+  }
+  static async checkReferralCode(code) {
+    if (!code) return null;
+    const referralRef = ref(database, "users");
+    const snapshot = await get(referralRef);
+    if (snapshot.exists()) {
+      const users = snapshot.val();
+      for (const userId in users) {
+        if (users[userId].referralCode === code) {
+          return { userId, username: users[userId].username };
+        }
+      }
+    }
+    return null;
+  }
+  static showError(id, message) {
+    const el = document.getElementById(id);
+    if(el) {
+      el.textContent = message;
+      el.style.display = message ? "block" : "none";
+      el.classList.add("fade-in");
+    }
+  }
+  static showSuccess(id, message) {
+    const el = document.getElementById(id);
+    if(el) {
+      el.textContent = message;
+      el.style.display = message ? "block" : "none";
+      el.classList.add("fade-in");
+    }
+  }
+  static clearMessages() {
+    ["loginError", "signupError", "signupSuccess", "referralStatus"].forEach(id=>{
+      const el = document.getElementById(id);
+      if(el) {
+        el.textContent = "";
+        el.style.display = "none";
+        el.className = el.className.replace(/(valid|invalid|fade-in)/g,"").trim();
+      }
+    });
+  }
+  static updateReferralStatus(isValid, message) {
+    const el = document.getElementById("referralStatus");
+    if(el){
+      el.textContent = message;
+      el.className = `referral-status ${isValid ? "valid" : "invalid"} fade-in`;
+      el.style.display = message ? "block" : "none";
+    }
+  }
+  static setButtonLoading(button, loading) {
+    if (loading) {
+      button.innerHTML = '<span class="loading"></span>Chargement...';
+      button.disabled = true;
+    } else {
+      button.innerHTML = button.dataset.originalText;
+      button.disabled = false;
+    }
+  }
+}
+
+class FormManager {
+  static async handleSignup(e) {
+    e.preventDefault();
+    Utils.clearMessages();
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    submitBtn.dataset.originalText = submitBtn.innerHTML;
+    Utils.setButtonLoading(submitBtn,true);
+    try {
+      const username = document.getElementById("signupUsername").value.trim();
+      const countrySelect = document.getElementById("signupCountry");
+      const country = countrySelect.value;
+      const countryOption = countrySelect.selectedOptions[0];
+      const indicatif = countryOption?.dataset?.phone || "";
+      const telephone = document.getElementById("signupTelephone").value.trim();
+      const password = document.getElementById("signupPassword").value;
+      const confirmPassword = document.getElementById("confirmPassword").value;
+      const referralCode = document.getElementById("referralCode").value.trim();
+      if (!username || !country || !telephone || !password) {
+        throw new Error("Veuillez remplir tous les champs requis et sélectionner un pays");
+      }
+      if (password !== confirmPassword) {
+        throw new Error("Les mots de passe ne correspondent pas");
+      }
+      if (password.length < 6) {
+        throw new Error("Le mot de passe doit contenir au moins 6 caractères");
+      }
+      if (telephone.length < 6) {
+        throw new Error("Numéro de téléphone invalide");
+      }
+      let referrerData = null;
+      if (referralCode) {
+        referrerData = await Utils.checkReferralCode(referralCode);
+        if (!referrerData) {
+          throw new Error("Code de parrainage invalide");
+        }
+      }
+      const email = `${indicatif}${telephone}@temp.com`;
+      const userCredential = await createUserWithEmailAndPassword(auth,email,password);
+      const user = userCredential.user;
+      const newReferralCode = Utils.generateReferralCode();
+      await set(ref(database,"users/" + user.uid), {
+        username,
+        email,
+        phoneNumber: `${indicatif}${telephone}`,
+        country,
+        balance: referrerData ? 100 : 0,
+        referralCode: newReferralCode,
+        referredBy: referrerData?.userId || null,
+        createdAt: Date.now(),
+      });
+      if (referrerData && referrerData.userId) {
+        const referrerRef = ref(database, `users/${referrerData.userId}`);
+        const referrerSnapshot = await get(referrerRef);
+        if (referrerSnapshot.exists()) {
+          const currentBalance = referrerSnapshot.val().balance || 0;
+          await set(ref(database, `users/${referrerData.userId}/balance`), currentBalance + 10);
+        }
+      }
+      Utils.showSuccess("signupSuccess", "Compte créé avec succès ! Redirection...");
+      setTimeout(() => window.location.href = "accueil.html",1500);
+    } catch (err) {
+      console.error("Erreur:", err);
+      Utils.showError("signupError", err.message);
+    } finally {
+      Utils.setButtonLoading(submitBtn,false);
+    }
+  }
+
+  static async handleLogin(e) {
+    e.preventDefault();
+    Utils.clearMessages();
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    submitBtn.dataset.originalText = submitBtn.innerHTML;
+    Utils.setButtonLoading(submitBtn,true);
+    try {
+      const countrySelect = document.getElementById("loginCountry");
+      const countryOption = countrySelect.selectedOptions[0];
+      const indicatif = countryOption?.dataset?.phone || "";
+      const telephone = document.getElementById("loginTelephone").value.trim();
+      const password = document.getElementById("loginPassword").value;
+      if(!indicatif || !telephone || !password) {
+        throw new Error("Veuillez remplir tous les champs et sélectionner un pays");
+      }
+      const email = `${indicatif}${telephone}@temp.com`;
+      await signInWithEmailAndPassword(auth,email,password);
+
+      // Mise à jour numéro avec indicatif dans BDD si besoin
+      await FormManager.addIndicatifIfMissing(auth.currentUser.uid);
+
+      window.location.href = "accueil.html";
+    }
+    catch(err){
+      console.error("Erreur de connexion:", err);
+      Utils.showError("loginError","Numéro ou mot de passe incorrect");
+    }
+    finally {
+      Utils.setButtonLoading(submitBtn,false);
+    }
+  }
+
+  static async addIndicatifIfMissing(uid) {
+    if(!uid) return;
+    const userRef = ref(database, "users/" + uid);
+    const snapshot = await get(userRef);
+    if(!snapshot.exists()) return;
+    const user = snapshot.val();
+    const phoneDb = user.phoneNumber || "";
+    const country = user.country || "";
+    const countryIndicatifs = {
+      "Côte d'Ivoire": "+225",
+      "Bénin": "+229",
+      "Togo": "+228",
+      "Mali": "+223",
+      "Sénégal": "+221",
+      "Burkina Faso": "+226"
+    };
+    if(phoneDb && !phoneDb.startsWith("+") && countryIndicatifs[country]){
+      const newPhone = countryIndicatifs[country] + phoneDb.replace(/^0+/,"");
+      await update(userRef, { phoneNumber: newPhone });
+      console.log(`Numéro mis à jour pour utilisateur ${uid}: ${newPhone}`);
+    }
+  }
+
+  static async handleReferralCodeInput() {
+    const referralInput = document.getElementById("referralCode");
+    const code = referralInput.value.trim().toUpperCase();
+    if (!code) {
+      Utils.updateReferralStatus(true, "");
+      return;
+    }
+    try {
+      const referrerData = await Utils.checkReferralCode(code);
+      if (referrerData) {
+        Utils.updateReferralStatus(true, `Code valide ! Parrain: ${referrerData.username}`);
+      } else {
+        Utils.updateReferralStatus(false, "Code de parrainage invalide");
+      }
+    }
+    catch(error) {
+      Utils.updateReferralStatus(false, "Erreur de vérification du code");
+    }
+  }
+
+  static handleReferralCodeFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const referralCode = urlParams.get("ref");
+    const referralCodeInput = document.getElementById("referralCode");
+    if (referralCodeInput && referralCode) {
+      referralCodeInput.value = referralCode.toUpperCase();
+      FormManager.handleReferralCodeInput();
+    }
+  }
+}
+
+function debounce(func, wait) {
+  let timeout;
+  return function(...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(this, args), wait);
+  };
+}
+
+// Gestion du changement de drapeau (inscription)
+const signupCountry = document.getElementById("signupCountry");
+const flagSignup = document.getElementById("flagSignup");
+signupCountry.addEventListener("change", () => {
+  if (!signupCountry.value) {
+    flagSignup.className = "flag-display fi";
+    return;
+  }
+  const code = signupCountry.selectedOptions[0].dataset.code || "";
+  flagSignup.className = code ? `flag-display fi fi-${code}` : "flag-display fi";
+});
+// Gestion du changement de drapeau (connexion)
+const loginCountry = document.getElementById("loginCountry");
+const flagLogin = document.getElementById("flagLogin");
+loginCountry.addEventListener("change", () => {
+  if (!loginCountry.value) {
+    flagLogin.className = "flag-display fi";
+    return;
+  }
+  const code = loginCountry.selectedOptions[0].dataset.code || "";
+  flagLogin.className = code ? `flag-display fi fi-${code}` : "flag-display fi";
+});
+// Gestion des animations des panneaux
+const signUpButton = document.getElementById("signUp");
+const signInButton = document.getElementById("signIn");
+const signUpMobileButton = document.getElementById("signUpMobile");
+const signInMobileButton = document.getElementById("signInMobile");
+const container = document.getElementById("container");
+signUpButton?.addEventListener("click", () => {
+  container.classList.add("right-panel-active");
+});
+signInButton?.addEventListener("click", () => {
+  container.classList.remove("right-panel-active");
+});
+signUpMobileButton?.addEventListener("click", () => {
+  container.classList.add("right-panel-active");
+});
+signInMobileButton?.addEventListener("click", () => {
+  container.classList.remove("right-panel-active");
+});
+// Initialization events and referral code check on load
+document.addEventListener("DOMContentLoaded", () => {
+  const signupForm = document.getElementById("signupFormData");
+  const loginForm = document.getElementById("loginFormData");
+  const referralInput = document.getElementById("referralCode");
+  
+  if (signupForm) signupForm.addEventListener("submit", FormManager.handleSignup);
+  if (loginForm) loginForm.addEventListener("submit", FormManager.handleLogin);
+  if (referralInput) referralInput.addEventListener("input", debounce(FormManager.handleReferralCodeInput, 500));
+  
+  FormManager.handleReferralCodeFromURL();
+
+  // Init drapeaux si valeur déjà présente
+  if (signupCountry.value) {
+    const code = signupCountry.selectedOptions[0].dataset.code || "";
+    flagSignup.className = code ? `flag-display fi fi-${code}` : "flag-display fi";
+  }
+  if (loginCountry.value) {
+    const code = loginCountry.selectedOptions[0].dataset.code || "";
+    flagLogin.className = code ? `flag-display fi fi-${code}` : "flag-display fi";
+  }
+});
+
+// Firebase Auth state monitoring
+onAuthStateChanged(auth, user => {
+  if(user) {
+    console.log("Utilisateur connecté:", user.uid);
+  } else {
+    console.log("Utilisateur déconnecté");
+  }
+});
+</script>
+
+</body>
+</html>

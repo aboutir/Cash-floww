@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>accueil</title>
+
+  <!-- Import Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Import Font Awesome -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+
+  <style>
+    /* Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-gradient: linear-gradient(135deg, #a3bffa 0%, #668cff 100%);
+      --secondary-gradient: linear-gradient(135deg, #4facfe 0%, #00d4aa 100%);
+      --accent-color: #00b4d8;
+      --text-dark: #34495e;
+      --text-light: #7f8c8d;
+      --text-white: #fff;
+      --glass-bg: rgba(255 255 255 / 0.8);
+      --glass-border: rgba(102 126 234 / 0.2);
+      --shadow-md: 0 8px 25px rgba(0 180 216 / 0.3);
+      --border-radius-lg: 20px;
+      --spacing-lg: 20px;
+      --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+        Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background: #f9f9f9;
+      max-width: 28rem;
+      margin: 0 auto;
+      min-height: 100vh;
+      padding: 4rem 1rem 5rem; /* haut et bas espace */
+      color: var(--text-dark);
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Header fixe défilant */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 28rem;
+      padding: 1rem;
+      background: var(--glass-bg);
+      backdrop-filter: blur(25px);
+      border: 1px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-dark);
+      font-size: 0.9rem;
+      z-index: 1001;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .speaker-container {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border-radius: 0.5rem;
+      padding: 0.5rem;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-color);
+    }
+
+    .header-text {
+      display: inline-block;
+      padding-left: 100%;
+      animation: scrollText 20s linear infinite;
+      white-space: nowrap;
+      color: var(--text-dark);
+      font-weight: 600;
+      user-select: none;
+    }
+
+    @keyframes scrollText {
+      from {
+        transform: translateX(0);
+      }
+      to {
+        transform: translateX(-200%);
+      }
+    }
+
+    /* Bouton informations bonus comme lien */
+    .bonus-info-button {
+      display: inline-block;
+      max-width: 28rem;
+      margin: 1rem auto;
+      padding: 0.75rem 1.5rem;
+      text-align: center;
+      font-weight: 700;
+      font-size: 1rem;
+      color: white;
+      background: linear-gradient(135deg, #00b4d8, #00d4aa);
+      border-radius: 1rem;
+      box-shadow: 0 8px 20px rgba(0, 180, 216, 0.6);
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      text-decoration: none;
+    }
+
+    .bonus-info-button:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 12px 40px rgba(0, 180, 216, 0.8);
+      text-decoration: none;
+      color: white;
+    }
+
+    .bonus-info-button:active {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(0, 180, 216, 0.6);
+    }
+
+    /* Bannière loterie */
+    .lottery-banner {
+      margin: 1rem auto;
+      max-width: 28rem;
+      background: var(--secondary-gradient);
+      color: var(--text-white);
+      padding: 1.5rem 1.8rem;
+      border-radius: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-md);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border: 1px solid var(--glass-border);
+      cursor: pointer;
+      text-decoration: none;
+      user-select: none;
+    }
+    .lottery-banner:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 12px 40px rgba(0, 180, 216, 0.6);
+    }
+    .lottery-banner:active {
+      transform: translateY(-1px);
+    }
+    .lottery-banner::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255 255 255 / 0.2),
+        transparent
+      );
+      transition: left 0.5s;
+      border-radius: 1.5rem;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .lottery-banner:hover::before {
+      left: 100%;
+    }
+    .lottery-banner-text {
+      font-weight: 600;
+      font-size: 0.9rem;
+      z-index: 2;
+      max-width: 80%;
+    }
+    .lottery-banner-circle {
+      width: 3.75rem;
+      height: 3.75rem;
+      background: linear-gradient(135deg, #00b4d8, #00d4aa);
+      border-radius: 50%;
+      box-shadow: 0 4px 15px rgba(0, 180, 216, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+
+    /* Tableau revenus carré */
+    .revenue-section {
+      max-width: 28rem;
+      margin: 1rem auto;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border: 2px solid var(--accent-color);
+      border-radius: var(--border-radius-lg);
+      padding: 1rem;
+      aspect-ratio: 1 / 1;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .revenue-section img {
+      max-width: 100%;
+      max-height: 100%;
+      border-radius: 1rem;
+      object-fit: contain;
+      box-shadow: inset 0 0 5px rgba(0, 180, 216, 0.15);
+    }
+
+    /* Section gagnants */
+    .section {
+      max-width: 28rem;
+      margin: 1rem auto;
+      position: relative;
+      z-index: 10;
+    }
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--text-dark);
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      padding: 1rem;
+      border-radius: 1rem;
+      border: 1px solid var(--glass-border);
+      margin-bottom: 1rem;
+    }
+
+    .section-title img {
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      object-fit: cover;
+    }
+
+    .winners-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .winner-item {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border-radius: 1rem;
+      padding: 1rem;
+      border: 1px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+      opacity: 1;
+    }
+
+    .winner-item:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-5px);
+    }
+
+    .winner-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255 255 255 / 0.1),
+        transparent
+      );
+      transition: left 0.5s ease;
+    }
+    .winner-item:hover::before {
+      left: 100%;
+    }
+
+    .winner-info {
+      flex: 1;
+    }
+
+    .winner-number {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-dark);
+    }
+    .winner-amount {
+      font-weight: 700;
+      color: var(--accent-color);
+      font-size: 1rem;
+    }
+
+    /* Marque Sprite */
+    .pepsi-brand {
+      max-width: 28rem;
+      margin: 1rem auto 2rem;
+      font-weight: 900;
+      font-size: 2rem;
+      text-align: center;
+      color: var(--text-dark);
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      padding: 1.5rem;
+      border-radius: var(--border-radius-lg);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--shadow-md);
+    }
+    .pepsi-brand img {
+      width: 100%;
+      height: 8rem;
+      object-fit: cover;
+      border-radius: var(--border-radius-md);
+      box-shadow: 0 8px 25px rgba(0 0 0 / 0.1);
+      margin-top: 1rem;
+    }
+
+    /* Navigation bas modernisée */
+    .nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 28rem;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 0 8px;
+      border-top-left-radius: var(--border-radius-lg);
+      border-top-right-radius: var(--border-radius-lg);
+      box-shadow: 0 -4px 20px rgba(0 0 0 / 0.1);
+      border-top: 1px solid var(--glass-border);
+      z-index: 1001;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--text-light);
+      font-size: 12px;
+      width: 20%;
+      text-decoration: none;
+      transition: color 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      font-family: var(--font-family);
+    }
+
+    .nav-item i {
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+
+    .nav-active {
+      color: var(--accent-color);
+      font-weight: 700;
+      transform: translateY(-3px);
+    }
+
+    .nav-active::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 30px;
+      height: 3px;
+      background: var(--accent-color);
+      border-radius: 0 0 10px 10px;
+    }
+
+    .nav-active i {
+      background-color: rgba(0, 180, 216, 0.2);
+      padding: 8px;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body>
+  <!-- Arrière-plan animé -->
+  <div class="particles" id="particles-bg"></div>
+
+  <!-- Header fixe avec texte défilant -->
+  <div class="header" role="banner">
+    <div class="speaker-container" aria-label="Volume">
+      <i data-lucide="volume-2" class="speaker-icon" size="16"></i>
+    </div>
+    <div class="header-text" aria-live="polite">
+      Bienvenue sur Cash flow, avec Cash flow vous pouvez retirer votre revenu quotidien chaque jour.
+      Les frais de retrait s’appliquent à 10%.
+    </div>
+  </div>
+
+  <!-- Bannière Loterie -->
+  <a href="code.html" class="lottery-banner" role="button" tabindex="0">
+    <div class="lottery-banner-text" aria-label="Code cadeau">
+      Veuillez cliquez ici pour insérer le code de votre cadeau
+    </div>
+    <div class="lottery-banner-circle" aria-hidden="true">
+      <i class="fas fa-gift"></i>
+    </div>
+  </a>
+
+  <!-- Bouton lien Informations de bonus 4G plus -->
+  <a href="page.html" class="bonus-info-button" role="button" tabindex="0" aria-label="Informations de bonus 4G plus">
+   Comment utiliser le système cash flow 
+  </a>
+
+  <!-- Tableau revenus carré -->
+  <div class="revenue-section" aria-label="Tableau des revenus">
+    <img
+      src="https://image.noelshack.com/fichiers/2025/37/1/1757355124-screenshot-20250908-181143-trebedit.jpg"
+      alt="Tableau des revenus"
+    />
+  </div>
+
+  <!-- Section Gagnants -->
+  <section class="section" aria-labelledby="section-winners-title">
+    <h2 id="section-winners-title" class="section-title">
+      <img
+        src="https://image.noelshack.com/fichiers/2025/25/6/1750519713-4g-network-technology-concept-internet-260nw-1840890631.jpg"
+        alt="Icône réseau"
+      />
+      Il gagne de l’argent avec Cash flow 
+    </h2>
+    <div id="winners-list" class="winners-list"></div>
+  </section>
+
+  <!-- Marque Sprite -->
+  <section class="section">
+    <div class="pepsi-brand">Cash flow</div>
+    <img
+      src="https://image.noelshack.com/fichiers/2025/37/1/1757325765-images-1.png"
+      alt="Sprite Team"
+    />
+  </section>
+
+  <!-- Navigation bas -->
+  <nav class="nav" role="navigation" aria-label="Menu principal">
+    <a href="accueil.html" class="nav-item nav-active">
+      <i class="fas fa-home" aria-hidden="true"></i>
+      <span>Accueil</span>
+    </a>
+    <a href="investi.html" class="nav-item">
+      <i class="fas fa-gem" aria-hidden="true"></i>
+      <span>Marché</span>
+    </a>
+    <a href="machine.html" class="nav-item">
+      <i class="fas fa-chart-bar" aria-hidden="true"></i>
+      <span>Laboratoire</span>
+    </a>
+    <a href="equipe.html" class="nav-item">
+      <i class="fas fa-users" aria-hidden="true"></i>
+      <span>Équipe</span>
+    </a>
+    <a href="solde.html" class="nav-item">
+      <i class="fas fa-user-circle" aria-hidden="true"></i>
+      <span>Profil</span>
+    </a>
+  </nav>
+
+  <script>
+    // Création particules animées
+    function createParticles() {
+      const container = document.getElementById('particles-bg');
+      const count = 15;
+      for (let i = 0; i < count; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        const size = Math.random() * 6 + 2;
+        p.style.width = p.style.height = `${size}px`;
+        p.style.left = Math.random() * 100 + '%';
+        p.style.top = Math.random() * 100 + '%';
+        p.style.animationDelay = Math.random() * 6 + 's';
+        container.appendChild(p);
+      }
+    }
+
+    // Gestion des gagnants animé
+    document.addEventListener('DOMContentLoaded', () => {
+      createParticles();
+      lucide.createIcons();
+
+      const winnerPairs = [
+        [
+          { number: '****1573', amount: '12499.92 FCFA' },
+          { number: '****7477', amount: '833333.28 FCFA' },
+        ],
+        [
+          { number: '****5239', amount: '25000.00 FCFA' },
+          { number: '****8901', amount: '74500.00 FCFA' },
+        ],
+        [
+          { number: '****2468', amount: '125000.50 FCFA' },
+          { number: '****1357', amount: '56789.33 FCFA' },
+        ],
+      ];
+
+      const winnersList = document.getElementById('winners-list');
+      let currentPairIndex = 0;
+
+      function createWinnerItem(winner) {
+        const item = document.createElement('div');
+        item.className = 'winner-item';
+        item.innerHTML = `
+          <i data-lucide="circle-user" class="gray-icon" size="32"></i>
+          <div class="winner-info">
+            <div class="winner-number">Félicitations ${winner.number}</div>
+            <div class="winner-amount">${winner.amount}</div>
+          </div>
+        `;
+        return item;
+      }
+
+      function displayWinnerPair(index) {
+        winnersList.innerHTML = '';
+        winnerPairs[index].forEach(winner => {
+          winnersList.appendChild(createWinnerItem(winner));
+        });
+        lucide.createIcons();
+      }
+
+      displayWinnerPair(currentPairIndex);
+      setInterval(() => {
+        const items = document.querySelectorAll('.winner-item');
+        items.forEach(itm => (itm.style.opacity = '0'));
+
+        setTimeout(() => {
+          currentPairIndex = (currentPairIndex + 1) % winnerPairs.length;
+          displayWinnerPair(currentPairIndex);
+
+          const newItems = document.querySelectorAll('.winner-item');
+          setTimeout(() => {
+            newItems.forEach(itm => (itm.style.opacity = '1'));
+          }, 50);
+        }, 500);
+      }, 4000);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Configuration du Portefeuille</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet" />
+    <style>
+        /* Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Fond planche bois */
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-image: url('https://cdn.pixabay.com/photo/2016/03/09/09/30/wood-1245806_960_720.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center;
+            min-height: 100vh;
+            padding: 20px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Conteneur formulaire */
+        .container {
+            max-width: 420px;
+            margin: 0 auto;
+            padding: 32px 24px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Header logo et titre */
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            border-radius: 20px;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 24px rgba(79, 70, 229, 0.3);
+        }
+
+        .wallet-icon {
+            width: 40px;
+            height: 40px;
+            fill: white;
+        }
+
+        .title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #4f46e5;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #6b7280;
+            font-weight: 400;
+        }
+
+        /* Formulaire */
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #4f46e5;
+            margin-bottom: 8px;
+        }
+
+        .label-icon {
+            width: 16px;
+            height: 16px;
+            fill: rgba(79, 70, 229, 0.8);
+        }
+
+        .field-input {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 500;
+            color: #1f2937;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .field-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+        }
+
+        /* Sélecteur opérateur */
+        .operator-selector {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+
+        .operator-selector:hover, .operator-selector:focus {
+            border-color: #4f46e5;
+            outline: none;
+        }
+
+        .operator-display {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .operator-logo {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 12px;
+            color: white;
+            user-select: none;
+        }
+        .mtn-logo {
+            background: #ffcc00;
+            color: #000;
+        }
+        .orange-logo {
+            background: #ff6600;
+        }
+        .moov-logo {
+            background: #0099cc;
+        }
+        .wave-logo {
+            background: #ff1744;
+        }
+        .tmoney-logo {
+            background: #008000;
+            color: white;
+        }
+        .mixx-logo {
+            background: #800080;
+            color: white;
+        }
+
+        .chevron-icon {
+            width: 20px;
+            height: 20px;
+            fill: #6b7280;
+            transition: transform 0.3s ease;
+        }
+
+        /* Bouton */
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: 0 4px 16px rgba(79, 70, 229, 0.3);
+            user-select: none;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(79, 70, 229, 0.4);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-icon {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        /* Overlay et Bottom Sheet */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .bottom-sheet {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 24px 24px 0 0;
+            padding: 24px;
+            z-index: 999;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            max-height: 70vh;
+            overflow-y: auto;
+            user-select: none;
+        }
+        .bottom-sheet.active {
+            transform: translateY(0);
+            user-select: auto;
+        }
+
+        .sheet-header {
+            text-align: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .sheet-handle {
+            width: 40px;
+            height: 4px;
+            background: #d1d5db;
+            border-radius: 2px;
+            margin: 0 auto 16px;
+        }
+
+        .sheet-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .operators-list {
+            margin-bottom: 24px;
+        }
+
+        .operator {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            user-select: none;
+        }
+
+        .operator:hover, .operator:focus {
+            background: #f9fafb;
+            outline: none;
+        }
+
+        .operator.selected {
+            background: #eff6ff;
+            border-color: #4f46e5;
+        }
+
+        .operator-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .sheet-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .sheet-btn {
+            flex: 1;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+
+        .cancel-btn {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .cancel-btn:hover, .cancel-btn:focus {
+            background: #e5e7eb;
+            outline: none;
+        }
+
+        .confirm-btn {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .confirm-btn:hover, .confirm-btn:focus {
+            background: #4338ca;
+            outline: none;
+        }
+
+        /* Messages */
+        #message {
+            margin-bottom: 20px;
+        }
+
+        .message-success,
+        .message-error {
+            padding: 16px;
+            border-radius: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .message-success {
+            background: #ecfdf5;
+            color: #059669;
+            border: 1px solid #a7f3d0;
+        }
+
+        .message-error {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        .message-icon {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .container {
+                margin: 10px;
+                padding: 24px 20px;
+            }
+
+            body {
+                padding: 10px;
+            }
+
+            .title {
+                font-size: 24px;
+            }
+
+            .operator-logo {
+                width: 28px;
+                height: 28px;
+                font-size: 11px;
+            }
+
+            .form-label {
+                font-size: 13px;
+            }
+
+            .field-input {
+                padding: 14px;
+                font-size: 14px;
+            }
+
+            .submit-btn {
+                font-size: 15px;
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo" aria-hidden="true">
+                <svg class="wallet-icon" viewBox="0 0 24 24">
+                    <path
+                        d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                </svg>
+            </div>
+            <h1 class="title">Configuration</h1>
+            <p class="subtitle">Configurez votre portefeuille mobile</p>
+        </div>
+
+        <div id="message" role="alert" aria-live="assertive"></div>
+
+        <form id="walletForm" novalidate>
+            <div class="form-group">
+                <label class="form-label" for="ownerName">
+                    <svg class="label-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                    Nom du propriétaire
+                </label>
+                <input type="text" id="ownerName" class="field-input" placeholder="Entrez votre nom complet" required aria-required="true" />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="phone">
+                    <svg class="label-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                    </svg>
+                    Numéro de compte
+                </label>
+                <input type="tel" id="phone" class="field-input" placeholder="07 XX XX XX XX" required aria-required="true" />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="operatorSelector">
+                    <svg class="label-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    Opérateur mobile
+                </label>
+                <div class="operator-selector" id="operatorSelector" tabindex="0" aria-haspopup="listbox" aria-expanded="false" role="button" aria-labelledby="selectedType">
+                    <div class="operator-display" aria-live="polite" aria-atomic="true">
+                        <div class="operator-logo mtn-logo" aria-hidden="true">MTN</div>
+                        <span id="selectedType">MTN</span>
+                    </div>
+                    <svg class="chevron-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                    </svg>
+                </div>
+                <input type="hidden" id="operator" value="MTN" aria-hidden="true" />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="code">
+                    <svg class="label-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+                </svg>
+                <input type="password" id="code" class="field-input" placeholder="Code secret (min. 6 caractères)" required aria-required="true" />
+            </div>
+
+            <button type="button" id="submitBtn" class="submit-btn" aria-live="polite">
+                <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+                </svg>
+                Enregistrer la configuration
+            </button>
+        </form>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay" tabindex="-1"></div>
+
+    <!-- Bottom Sheet -->
+    <div class="bottom-sheet" id="bottomSheet" role="listbox" tabindex="-1" aria-label="Choisir un opérateur">
+        <div class="sheet-header">
+            <div class="sheet-handle" aria-hidden="true"></div>
+            <h3 class="sheet-title">Choisir un opérateur</h3>
+        </div>
+
+        <div class="operators-list">
+            <div class="operator selected" data-operator="MTN" role="option" aria-selected="true" tabindex="0">
+                <div class="operator-logo mtn-logo">MTN</div>
+                <span class="operator-name">MTN Mobile Money</span>
+            </div>
+            <div class="operator" data-operator="Orange" role="option" aria-selected="false" tabindex="0">
+                <div class="operator-logo orange-logo">OM</div>
+                <span class="operator-name">Orange Money</span>
+            </div>
+            <div class="operator" data-operator="Moov" role="option" aria-selected="false" tabindex="0">
+                <div class="operator-logo moov-logo">MM</div>
+                <span class="operator-name">Moov Money</span>
+            </div>
+            <div class="operator" data-operator="Wave" role="option" aria-selected="false" tabindex="0">
+                <div class="operator-logo wave-logo">WV</div>
+                <span class="operator-name">Wave</span>
+            </div>
+            <div class="operator" data-operator="Tmoney" role="option" aria-selected="false" tabindex="0">
+                <div class="operator-logo tmoney-logo">TM</div>
+                <span class="operator-name">Tmoney</span>
+            </div>
+            <div class="operator" data-operator="Mixx" role="option" aria-selected="false" tabindex="0">
+                <div class="operator-logo mixx-logo">MY</div>
+                <span class="operator-name">mixx by yas</span>
+            </div>
+        </div>
+
+        <div class="sheet-actions">
+            <button class="sheet-btn cancel-btn" id="cancelBtn" type="button">Annuler</button>
+            <button class="sheet-btn confirm-btn" id="confirmBtn" type="button">Confirmer</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDRrkHLMeb6dwgT9OnLRDnTbsAkSxO3qoQ",
+            authDomain: "maison-c53c7.firebaseapp.com",
+            databaseURL: "https://maison-c53c7-default-rtdb.firebaseio.com",
+            projectId: "maison-c53c7",
+            storageBucket: "maison-c53c7.firebasestorage.app",
+            messagingSenderId: "720174612151",
+            appId: "1:720174612151:web:d7af687cce1cf33dde1732"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase();
+        const auth = getAuth();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const operatorSelector = document.getElementById("operatorSelector");
+            const bottomSheet = document.getElementById("bottomSheet");
+            const overlay = document.getElementById("overlay");
+            const cancelBtn = document.getElementById("cancelBtn");
+            const confirmBtn = document.getElementById("confirmBtn");
+            const submitBtn = document.getElementById("submitBtn");
+            const options = document.querySelectorAll(".operator");
+            const selectedTypeDisplay = document.getElementById("selectedType");
+            const operatorInput = document.getElementById("operator");
+
+            let currentSelection = "MTN";
+            let tempSelection = "MTN";
+
+            function openBottomSheet() {
+                bottomSheet.classList.add("active");
+                overlay.classList.add("active");
+                operatorSelector.setAttribute('aria-expanded', 'true');
+                tempSelection = currentSelection;
+
+                options.forEach(option => {
+                    option.classList.toggle("selected", option.dataset.operator === tempSelection);
+                    option.setAttribute('aria-selected', option.dataset.operator === tempSelection);
+                });
+            }
+
+            function closeBottomSheet() {
+                bottomSheet.classList.remove("active");
+                overlay.classList.remove("active");
+                operatorSelector.setAttribute('aria-expanded', 'false');
+                tempSelection = currentSelection;
+            }
+
+            function confirmSelection() {
+                currentSelection = tempSelection;
+                selectedTypeDisplay.textContent = currentSelection;
+                operatorInput.value = currentSelection;
+
+                const operatorDisplay = document.querySelector(".operator-display .operator-logo");
+                operatorDisplay.className = `operator-logo ${currentSelection.toLowerCase()}-logo`;
+                operatorDisplay.textContent =
+                    currentSelection === "Orange" ? "OM" :
+                    currentSelection === "Moov" ? "MM" :
+                    currentSelection === "Wave" ? "WV" :
+                    currentSelection === "Tmoney" ? "TM" :
+                    currentSelection === "Mixx" ? "MY" :
+                    "MTN";
+
+                closeBottomSheet();
+            }
+
+            operatorSelector.addEventListener("click", openBottomSheet);
+            overlay.addEventListener("click", closeBottomSheet);
+            cancelBtn.addEventListener("click", closeBottomSheet);
+            confirmBtn.addEventListener("click", confirmSelection);
+
+            options.forEach(option => {
+                option.addEventListener("click", (e) => {
+                    options.forEach(opt => {
+                        opt.classList.remove("selected");
+                        opt.setAttribute('aria-selected', 'false');
+                    });
+                    option.classList.add("selected");
+                    option.setAttribute('aria-selected', 'true');
+                    tempSelection = option.dataset.operator;
+                });
+            });
+
+            function showMessage(text, type) {
+                const messageDiv = document.getElementById("message");
+                const iconSvg =
+                    type === "success"
+                        ? '<svg class="message-icon" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>'
+                        : '<svg class="message-icon" viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>';
+
+                messageDiv.innerHTML = `
+                    <div class="message-${type} animate__animated animate__fadeIn">
+                        ${iconSvg}
+                        ${text}
+                    </div>
+                `;
+
+                setTimeout(() => {
+                    messageDiv.innerHTML = "";
+                }, 5000);
+            }
+
+            function validateForm() {
+                const ownerName = document.getElementById("ownerName").value.trim();
+                const phone = document.getElementById("phone").value.trim();
+                const code = document.getElementById("code").value.trim();
+
+                if (!ownerName) {
+                    showMessage("Le nom du propriétaire est requis", "error");
+                    return false;
+                }
+
+                if (!phone) {
+                    showMessage("Le numéro de compte est requis", "error");
+                    return false;
+                }
+
+                if (!code) {
+                    showMessage("Le code de retrait est requis", "error");
+                    return false;
+                }
+
+                if (code.length < 6) {
+                    showMessage("Le code de retrait doit contenir au moins 6 caractères", "error");
+                    return false;
+                }
+
+                return true;
+            }
+
+            async function setupWithdrawal() {
+                if (!validateForm()) {
+                    return;
+                }
+
+                const ownerName = document.getElementById("ownerName").value.trim();
+                const phone = document.getElementById("phone").value.trim();
+                const code = document.getElementById("code").value.trim();
+                const operator = operatorInput.value;
+
+                try {
+                    const user = auth.currentUser;
+                    if (!user) {
+                        showMessage("Vous devez être connecté pour effectuer cette opération", "error");
+                        setTimeout(() => {
+                            window.location.href = "login.html";
+                        }, 2000);
+                        return;
+                    }
+
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = `
+                        <svg class="btn-icon" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
+                            <path d="M14 6l6 6-6 6"/>
+                            <path d="M4 6l6 6-6 6"/>
+                        </svg>
+                        Enregistrement en cours...
+                    `;
+
+                    await set(ref(db, `users/${user.uid}/withdrawalConfig`), {
+                        ownerName,
+                        phone,
+                        operator,
+                        code,
+                        configuredAt: Date.now(),
+                        lastUpdated: new Date().toISOString(),
+                    });
+
+                    showMessage("Configuration enregistrée avec succès !", "success");
+
+                    setTimeout(() => {
+                        window.location.href = "carte.html";
+                    }, 2000);
+                } catch (error) {
+                    console.error("Erreur lors de l'enregistrement:", error);
+                    showMessage(`Erreur: ${error.message}`, "error");
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = `
+                        <svg class="btn-icon" viewBox="0 0 24 24">
+                            <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+                        </svg>
+                        Enregistrer la configuration
+                    `;
+                }
+            }
+
+            function loadExistingData() {
+                const user = auth.currentUser;
+                if (!user) return;
+
+                const configRef = ref(db, `users/${user.uid}/withdrawalConfig`);
+                onValue(configRef, (snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        document.getElementById("ownerName").value = data.ownerName || "";
+                        document.getElementById("phone").value = data.phone || "";
+                        document.getElementById("code").value = data.code || "";
+                        currentSelection = data.operator || "MTN";
+                        selectedTypeDisplay.textContent = currentSelection;
+                        operatorInput.value = currentSelection;
+
+                        const operatorDisplay = document.querySelector(".operator-display .operator-logo");
+                        operatorDisplay.className = `operator-logo ${currentSelection.toLowerCase()}-logo`;
+                        operatorDisplay.textContent =
+                            currentSelection === "Orange" ? "OM" :
+                            currentSelection === "Moov" ? "MM" :
+                            currentSelection === "Wave" ? "WV" :
+                            currentSelection === "Tmoney" ? "TM" :
+                            currentSelection === "Mixx" ? "MY" :
+                            "MTN";
+
+                        options.forEach(opt => {
+                            const isSelected = opt.dataset.operator === currentSelection;
+                            opt.classList.toggle("selected", isSelected);
+                            opt.setAttribute('aria-selected', isSelected);
+                        });
+                    }
+                });
+            }
+
+            onAuthStateChanged(auth, (user) => {
+                if (!user) {
+                    window.location.href = "login.html";
+                    return;
+                }
+                loadExistingData();
+            });
+
+            submitBtn.addEventListener("click", setupWithdrawal);
+
+            document.querySelectorAll(".field-input").forEach((input) => {
+                input.addEventListener("keypress", (e) => {
+                    if (e.key === "Enter") {
+                        e.preventDefault();
+                        setupWithdrawal();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

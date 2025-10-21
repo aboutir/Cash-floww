@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Historique des retraits</title>
+<style>
+  /* Reset */
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f7fa; margin: 0; padding: 0.5rem; color: #333;
+    min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+  }
+  .page-header-section {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 194, 255, 0.4);
+    width: 100%;
+    max-width: 600px;
+    padding: 1.5rem 1rem;
+    color: white;
+    font-weight: 700;
+    font-size: 1.6rem;
+    text-align: center;
+    margin-bottom: 1.25rem;
+    letter-spacing: 0.06em;
+    user-select: none;
+  }
+  header {
+    width: 100%; max-width: 600px; display: flex; align-items: center; margin-bottom: 0.75rem;
+  }
+  .back-arrow {
+    background: none; border: none; cursor: pointer; padding: 0; margin-right: 0.4rem; font-size: 1.2rem;
+    color: #007BFF; display: flex; align-items: center; transition: color 0.2s;
+  }
+  .back-arrow:hover, .back-arrow:focus {
+    color: #0056b3; outline: none;
+  }
+  .back-arrow svg {
+    width: 18px; height: 18px; stroke-width: 2.2;
+  }
+  h1 {
+    font-weight: 700; font-size: 1.25rem; margin: 0; flex-grow: 1; text-align: center;
+    color: #222; user-select: none;
+  }
+  #history-container {
+    width: 100%; max-width: 600px;
+  }
+  article.card {
+    background: white; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+    padding: 0.75rem 1rem; margin-bottom: 0.9rem; transition: box-shadow 0.15s; font-size: 0.85rem;
+  }
+  article.card:hover, article.card:focus-within {
+    box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+  }
+  .card-header {
+    display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-weight: 700;
+    font-size: 1rem; color: #007BFF;
+  }
+  .card-body .row {
+    display: flex; justify-content: space-between; align-items: center; margin-top: 0.35rem;
+  }
+  .left-section {
+    display: flex; align-items: center; gap: 0.4rem; color: #555; font-weight: 600;
+  }
+  .value {
+    font-weight: 600; color: #222;
+  }
+  .icon-container {
+    width: 20px; height: 20px; flex-shrink: 0;
+  }
+  /* Status badges */
+  .status-badge {
+    padding: 0.15em 0.4em; border-radius: 10px; font-weight: 600; font-size: 0.75rem;
+    color: white; white-space: nowrap; user-select: none;
+  }
+  .status-pending { background-color: #f39c12; }
+  .status-completed { background-color: #27ae60; }
+  .status-failed { background-color: #c0392b; }
+  .status-paid { background-color: #2ecc71; }
+  .value.amount-fees {
+    color: #c0392b; font-weight: 700;
+  }
+  .no-history {
+    background: #dbe9ff; border-radius: 10px; padding: 2rem 1.5rem;
+    text-align: center; color: #576574; user-select: none; font-size: 0.9rem;
+  }
+  .no-history-icon {
+    width: 36px; height: 36px; margin: 0 auto 0.8rem; stroke: #3867d6;
+  }
+  .no-history h2 {
+    margin: 0.25rem 0 0.15rem; font-weight: 700; color: #2e3641; font-size: 1.1rem;
+  }
+  .no-history p { margin: 0; }
+  @media (max-width: 480px) {
+    body { padding: 0.3rem; }
+    article.card { padding: 0.6rem 0.8rem; font-size: 0.8rem; }
+    .page-header-section { font-size: 1.3rem; padding: 1rem 0.75rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header-section">
+  Historiques des retraits
+</div>
+
+<header>
+  <button aria-label="Retour" class="back-arrow" title="Retour">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <polyline points="15 18 9 12 15 6"></polyline>
+    </svg>
+  </button>
+  <h1></h1>
+</header>
+
+<!-- Templates d’icônes cachés -->
+<template id="icon-amountRequested">
+  <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="#1E90FF" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true" focusable="false">
+    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" fill="#bbdefb" />
+    <path d="M9 9h6v6H9z" fill="#1565c0" />
+  </svg>
+</template>
+
+<template id="icon-status">
+  <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="#f39c12" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true" focusable="false">
+    <circle cx="12" cy="12" r="10" fill="#ffe0b2" />
+    <polyline points="12 6 12 12 16 14" stroke="#e67e22" stroke-width="3"/>
+  </svg>
+</template>
+
+<template id="icon-fees">
+  <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="#c0392b" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true" focusable="false">
+    <circle cx="12" cy="12" r="10" fill="#f8d7da" />
+    <path d="M9 12l2 2 4-4" stroke="#a93226" stroke-width="3"/>
+  </svg>
+</template>
+
+<template id="icon-amountNet">
+  <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="#27ae60" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true" focusable="false">
+    <circle cx="12" cy="12" r="10" fill="#d4edda" />
+    <path d="M9 12l2 2 4-4" stroke="#19692c" stroke-width="3"/>
+  </svg>
+</template>
+
+<template id="icon-noHistory">
+  <svg fill="none" stroke="#3867d6" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+    <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+    <line x1="12" y1="22.08" x2="12" y2="12"/>
+  </svg>
+</template>
+
+<main id="history-container" role="region" aria-live="polite" aria-label="Historique des retraits">
+  <!-- Les cartes seront générées ici -->
+</main>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
+  import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDRrkHLMeb6dwgT9OnLRDnTbsAkSxO3qoQ",
+    authDomain: "maison-c53c7.firebaseapp.com",
+    databaseURL: "https://maison-c53c7-default-rtdb.firebaseio.com",
+    projectId: "maison-c53c7",
+    storageBucket: "maison-c53c7.firebasestorage.app",
+    messagingSenderId: "720174612151",
+    appId: "1:720174612151:web:d7af687cce1cf33dde1732"
+  };
+
+  initializeApp(firebaseConfig);
+
+  const auth = getAuth();
+  const db = getDatabase();
+
+  function formatAmount(amount) {
+    return `${amount.toLocaleString('fr-FR')} FCFA`;
+  }
+
+  function formatDate(timestamp) {
+    return new Date(timestamp).toLocaleString('fr-FR', {
+      day: '2-digit', month: '2-digit', year: 'numeric',
+      hour: '2-digit', minute: '2-digit'
+    });
+  }
+
+  function getStatusBadge(status) {
+    const map = {
+      "En attente": ["status-pending", "En attente"],
+      "Approuvé": ["status-completed", "Approuvé"],
+      "Payé": ["status-paid", "Payé"],
+      "Rejeté": ["status-failed", "Rejeté"],
+      "Terminé": ["status-completed", "Terminé"]
+    };
+    const [className, text] = map[status] || ["status-pending", status];
+    return `<span class="status-badge ${className}">${text}</span>`;
+  }
+
+  function cloneIcon(id) {
+    const template = document.getElementById(id);
+    return template ? template.content.cloneNode(true) : null;
+  }
+
+  function createCard(d) {
+    const fees = d.fees || 0;
+    const net = d.amount - fees;
+
+    const card = document.createElement('article');
+    card.className = 'card';
+    card.tabIndex = 0;
+    card.setAttribute('aria-label', `Retrait du ${formatDate(d.timestamp)}, montant demandé ${formatAmount(d.amount)}, statut ${d.status}`);
+
+    card.innerHTML = `
+      <header class="card-header">
+        <div class="card-amount">- ${formatAmount(d.amount)}</div>
+        <div class="card-date">${formatDate(d.timestamp)}</div>
+      </header>
+      <section class="card-body">
+        <div class="row">
+          <div class="left-section">
+            <div class="icon-container" aria-hidden="true"></div>
+            <div>Montant demandé</div>
+          </div>
+          <div class="value amount-requested">- ${formatAmount(d.amount)}</div>
+        </div>
+        <div class="row">
+          <div class="left-section">
+            <div class="icon-container" aria-hidden="true"></div>
+            <div>Statut</div>
+          </div>
+          <div>${getStatusBadge(d.status)}</div>
+        </div>
+      </section>
+    `;
+
+    if (fees > 0) {
+      const feesRow = document.createElement('div');
+      feesRow.className = 'row';
+      feesRow.innerHTML = `
+        <div class="left-section">
+          <div class="icon-container" aria-hidden="true"></div>
+          <div>Frais de retrait 1% appliqué</div>
+        </div>
+        <div class="value amount-fees">- ${formatAmount(fees)}</div>
+      `;
+      card.querySelector('section.card-body').appendChild(feesRow);
+
+      const feesIconContainer = feesRow.querySelector('.icon-container');
+      feesIconContainer.appendChild(cloneIcon('icon-fees'));
+    }
+
+    const netRow = document.createElement('div');
+    netRow.className = 'row';
+    netRow.innerHTML = `
+      <div class="left-section">
+        <div class="icon-container" aria-hidden="true"></div>
+        <div>Montant net</div>
+      </div>
+      <div class="value amount-net">${formatAmount(net)}</div>
+    `;
+    card.querySelector('section.card-body').appendChild(netRow);
+
+    card.querySelectorAll('.row')[0].querySelector('.icon-container').appendChild(cloneIcon('icon-amountRequested'));
+    card.querySelectorAll('.row')[1].querySelector('.icon-container').appendChild(cloneIcon('icon-status'));
+    card.querySelectorAll('.row')[card.querySelectorAll('.row').length - 1].querySelector('.icon-container').appendChild(cloneIcon('icon-amountNet'));
+
+    return card;
+  }
+
+  function showEmpty() {
+    const container = document.getElementById('history-container');
+    container.innerHTML = `
+      <section class="no-history" role="region" aria-live="polite">
+        <div class="no-history-icon" aria-hidden="true"></div>
+        <h2>Aucun historique</h2>
+        <p>Vos retraits apparaîtront ici une fois effectués.</p>
+      </section>`;
+    const iconContainer = container.querySelector('.no-history-icon');
+    iconContainer.appendChild(cloneIcon('icon-noHistory'));
+  }
+
+  onAuthStateChanged(auth, user => {
+    if (!user) {
+      window.location.href = 'login.html';
+      return;
+    }
+
+    const historyRef = ref(db, `users/${user.uid}/withdrawalHistory`);
+    onValue(historyRef, snapshot => {
+      const history = snapshot.val();
+      const container = document.getElementById('history-container');
+
+      if (!history || !Object.keys(history).length) {
+        showEmpty();
+        return;
+      }
+
+      container.innerHTML = '';
+      const ordered = Object.entries(history)
+        .sort((a, b) => b[1].timestamp - a[1].timestamp)
+        .map(([, v]) => createCard(v));
+
+      ordered.forEach(card => container.appendChild(card));
+    });
+  });
+
+  document.querySelector('.back-arrow').addEventListener('click', e => {
+    e.preventDefault();
+    history.back();
+  });
+</script>
+
+</body>
+</html>
